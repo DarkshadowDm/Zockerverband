@@ -175,22 +175,30 @@ const music = document.getElementById('bgMusic');
     });
 });
 
-// Event-Anmeldung
-document.getElementById("eventForm").addEventListener("submit", function(e){
-    e.preventDefault();
-    let name = document.getElementById("name").value;
-    let discord = document.getElementById("discord").value;
-    let event = document.getElementById("event").value;
-    if(event === "") {alert("Bitte wähle ein Event aus!"); return;}
-    fetch(webhookURL, {
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({
-            content:`🎮 **Neue Event Anmeldung!**\n👤 Name: ${name}\n💬 Discord: ${discord}\n🏆 Event: ${event}`
-        })
-    });
-    document.getElementById("msg").innerText = "✅ Anmeldung gesendet!";
-    document.getElementById("eventForm").reset();
+<div class="box">
+<h2>🎉 Event Anmeldung</h2>
+<form id="eventForm">
+  <input type="text" id="name" placeholder="Dein Name" required><br>
+  <input type="text" id="discord" placeholder="Discord Name (z.B. User#1234)" required><br>
+  <select id="event" required>
+    <option value="">-- Wähle ein Event --</option>
+    <option value="Minecraft Turnier">Minecraft Turnier</option>
+    <option value="Fortnite Battle">Fortnite Battle</option>
+    <option value="Roblox Event">Roblox Event</option>
+    <option value="Valorant Fun Match">Valorant Fun Match</option>
+  </select><br>
+  <button type="submit" style="
+    background: black; 
+    color: red; 
+    border: 2px solid red; 
+    padding: 10px 20px; 
+    cursor: pointer; 
+    font-size: 1em; 
+    margin-top: 10px;
+  ">Anmelden</button>
+</form>
+<p id="msg"></p>
+</div>
 });
 </script>
 
