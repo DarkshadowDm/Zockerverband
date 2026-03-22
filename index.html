@@ -4,23 +4,11 @@
 <meta charset="UTF-8">
 <title>Zockerverband</title>
 <style>
-<audio id="bgMusic" loop>
-  <source src="https://cdn.pixabay.com/download/audio/2021/10/05/audio_0b6b2f2a97.mp3?filename=8-bit-battle-theme-112880.mp3" type="audio/mpeg">
-</audio>
-
-<script>
-const music = document.getElementById('bgMusic');
-
-// Startet die Musik automatisch beim ersten Klick irgendwo auf der Seite
-document.body.addEventListener('click', function startMusic() {
-    music.play().catch(() => {}); // Fehler ignorieren, falls Autoplay blockiert
-    document.body.removeEventListener('click', startMusic); // nur einmal nötig
-});
-</script>
+/* Grundfarben & Schrift */
 body {
     margin: 0;
     font-family: 'Courier New', monospace;
-    background: radial-gradient(circle at top, #6a0dad, #0000ff);
+    background: linear-gradient(120deg, #6a0dad, #0000ff);
     color: white;
     text-align: center;
     overflow-x: hidden;
@@ -34,10 +22,8 @@ body {
     position: fixed;
     top: 0;
     left: 0;
-    background: transparent;
     z-index: -1;
 }
-
 .star {
     position: absolute;
     width: 2px;
@@ -46,12 +32,12 @@ body {
     border-radius: 50%;
     animation: blinkStar linear infinite;
 }
-
 @keyframes blinkStar {
-    0%, 100% {opacity: 1;}
+    0%,100% {opacity: 1;}
     50% {opacity: 0;}
 }
 
+/* Überschrift blink & glow */
 h1 {
     color: red;
     font-size: 3em;
@@ -63,11 +49,10 @@ h1 {
     0%,100% {text-shadow:0 0 15px red,0 0 30px red;}
     50% {text-shadow:0 0 25px red,0 0 50px red;}
 }
-h1 span {
-    animation: blink 1s infinite;
-}
+h1 span {animation: blink 1s infinite;}
 @keyframes blink {0%,50%,100%{opacity:1;}25%,75%{opacity:0;}}
 
+/* Navbar */
 .navbar {
     background: #111;
     padding: 10px;
@@ -81,6 +66,7 @@ h1 span {
 }
 .navbar a:hover {text-decoration: underline;}
 
+/* Boxen */
 .box {
     border: 2px solid white;
     margin: 20px auto;
@@ -92,10 +78,9 @@ h1 span {
     box-shadow: 0 0 20px red;
     transition: 0.5s;
 }
-.box:hover {
-    box-shadow: 0 0 40px red;
-}
+.box:hover {box-shadow: 0 0 40px red;}
 
+/* Formulare / Eingaben */
 input, select {
     background: black;
     color: white;
@@ -107,26 +92,14 @@ input, select {
     border-radius: 5px;
 }
 
-button {
-    background: black;
-    color: red;
-    border: 2px solid red;
-    padding: 10px 20px;
-    cursor: pointer;
-    font-size: 1em;
-    margin-top: 10px;
-}
-button:hover {
-    background: red;
-    color: black;
-}
+button {display:none;} /* Button entfernt */
 
 #msg {color: lime; margin-top:10px; font-weight:bold;}
-audio {margin-top:10px;}
 </style>
 </head>
 <body>
 
+<!-- Sterne-Hintergrund -->
 <div class="stars" id="stars"></div>
 
 <div class="navbar">
@@ -136,15 +109,10 @@ audio {margin-top:10px;}
 
 <h1>⚔️ <span>Zockerverband</span> ⚔️</h1>
 
-<audio id="bgMusic" autoplay loop>
+<!-- Musik unsichtbar -->
+<audio id="bgMusic" loop style="display:none;">
   <source src="https://cdn.pixabay.com/download/audio/2021/10/05/audio_0b6b2f2a97.mp3?filename=8-bit-battle-theme-112880.mp3" type="audio/mpeg">
-  Dein Browser unterstützt Audio nicht.
 </audio>
-<div>
-<button onclick="document.getElementById('bgMusic').paused ? document.getElementById('bgMusic').play() : document.getElementById('bgMusic').pause()">
-Play / Pause Musik
-</button>
-</div>
 
 <div class="box">
 <h2>📜 Beschreibung</h2>
@@ -159,7 +127,7 @@ Play / Pause Musik
 
 <div class="box">
 <h2>🛠️ Mit erstellt von</h2>
-<p>BanditKaito</p>
+<p>BanditKaito & Firani</p>
 </div>
 
 <div class="box">
@@ -169,12 +137,11 @@ Play / Pause Musik
 <input type="text" id="discord" placeholder="Discord Name (z.B. User#1234)" required><br>
 <select id="event" required>
 <option value="">-- Wähle ein Event --</option>
-<option value="Minecraft Turnier">Minecraft Turnier</option>
-<option value="Fortnite Battle">Fortnite Battle</option>
-<option value="Roblox Event">Roblox Event</option>
-<option value="Valorant Fun Match">Valorant Fun Match</option>
+<option value="Minecraft Turnier">Jeden Abend Among us</option>
+<option value="Fortnite Battle">Minecraft Event</option>
+<option value="Roblox Event">Valorant Event</option>
+<option value="Valorant Fun Match">R6 Event</option>
 </select><br>
-<button type="submit">ANMELDEN</button>
 </form>
 <p id="msg"></p>
 </div>
@@ -193,6 +160,15 @@ for(let i=0;i<100;i++){
     starsContainer.appendChild(star);
 }
 
+// Musik automatisch starten bei Nutzerinteraktion
+const music = document.getElementById('bgMusic');
+['click','scroll','mousemove','touchstart'].forEach(evt=>{
+    document.body.addEventListener(evt, function handler(){
+        music.play().catch(()=>{});
+        document.body.removeEventListener(evt, handler);
+    });
+});
+
 // Event-Anmeldung
 document.getElementById("eventForm").addEventListener("submit", function(e){
     e.preventDefault();
@@ -200,7 +176,13 @@ document.getElementById("eventForm").addEventListener("submit", function(e){
     let discord = document.getElementById("discord").value;
     let event = document.getElementById("event").value;
     if(event === "") {alert("Bitte wähle ein Event aus!"); return;}
-    fetch(webhookURL, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({content:`🎮 **Neue Event Anmeldung!**\n👤 Name: ${name}\n💬 Discord: ${discord}\n🏆 Event: ${event}`})});
+    fetch(webhookURL, {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+            content:`🎮 **Neue Event Anmeldung!**\n👤 Name: ${name}\n💬 Discord: ${discord}\n🏆 Event: ${event}`
+        })
+    });
     document.getElementById("msg").innerText = "✅ Anmeldung gesendet!";
     document.getElementById("eventForm").reset();
 });
