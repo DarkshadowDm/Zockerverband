@@ -4,13 +4,52 @@
 <meta charset="UTF-8">
 <title>Zockerverband</title>
 <style>
+<audio id="bgMusic" loop>
+  <source src="https://cdn.pixabay.com/download/audio/2021/10/05/audio_0b6b2f2a97.mp3?filename=8-bit-battle-theme-112880.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const music = document.getElementById('bgMusic');
+
+// Startet die Musik automatisch beim ersten Klick irgendwo auf der Seite
+document.body.addEventListener('click', function startMusic() {
+    music.play().catch(() => {}); // Fehler ignorieren, falls Autoplay blockiert
+    document.body.removeEventListener('click', startMusic); // nur einmal nötig
+});
+</script>
 body {
     margin: 0;
     font-family: 'Courier New', monospace;
-    background: radial-gradient(circle at top, #0d0d0d, #000);
+    background: radial-gradient(circle at top, #6a0dad, #0000ff);
     color: white;
     text-align: center;
     overflow-x: hidden;
+    position: relative;
+}
+
+/* Sterne Hintergrund */
+.stars {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: transparent;
+    z-index: -1;
+}
+
+.star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    animation: blinkStar linear infinite;
+}
+
+@keyframes blinkStar {
+    0%, 100% {opacity: 1;}
+    50% {opacity: 0;}
 }
 
 h1 {
@@ -20,12 +59,10 @@ h1 {
     text-shadow: 0 0 15px red, 0 0 30px red;
     animation: pulse 2s infinite;
 }
-
 @keyframes pulse {
     0%,100% {text-shadow:0 0 15px red,0 0 30px red;}
     50% {text-shadow:0 0 25px red,0 0 50px red;}
 }
-
 h1 span {
     animation: blink 1s infinite;
 }
@@ -90,6 +127,8 @@ audio {margin-top:10px;}
 </head>
 <body>
 
+<div class="stars" id="stars"></div>
+
 <div class="navbar">
 <a href="index.html">Startseite</a>
 <a href="events.html">Aktive Events</a>
@@ -109,7 +148,7 @@ Play / Pause Musik
 
 <div class="box">
 <h2>📜 Beschreibung</h2>
-<p>Willkommen im Zockerverband! Hier wird gezockt, gestreamt und epische Events veranstaltet.</p>
+<p>Willkommen im Zockerverband! Hier treffen sich Gamer, streamen gemeinsam und nehmen an epischen Events teil – sei dabei und zeige dein Können!</p>
 </div>
 
 <div class="box">
@@ -120,7 +159,7 @@ Play / Pause Musik
 
 <div class="box">
 <h2>🛠️ Mit erstellt von</h2>
-<p>Firani, Bandit, Kaito</p>
+<p>BanditKaito</p>
 </div>
 
 <div class="box">
@@ -143,6 +182,18 @@ Play / Pause Musik
 <script>
 const webhookURL = "https://discord.com/api/webhooks/1485142427965587526/EZcdPCX1d_25vNUe9V1YveoRSRjnx-WEcvRNYVifr4TkD9Sdv6D3SVJXV_q_zqk02YnO";
 
+// Sterne erzeugen
+const starsContainer = document.getElementById('stars');
+for(let i=0;i<100;i++){
+    const star = document.createElement('div');
+    star.classList.add('star');
+    star.style.top = Math.random()*100+'%';
+    star.style.left = Math.random()*100+'%';
+    star.style.animationDuration = (Math.random()*3+1)+'s';
+    starsContainer.appendChild(star);
+}
+
+// Event-Anmeldung
 document.getElementById("eventForm").addEventListener("submit", function(e){
     e.preventDefault();
     let name = document.getElementById("name").value;
