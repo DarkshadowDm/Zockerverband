@@ -36,18 +36,24 @@ body {
     50% {opacity: 0;}
 }
 
-/* Überschrift */
-h1 {
+/* Titel scroll von links nach rechts */
+#animatedTitle {
+    display: inline-block;
+    white-space: nowrap;
+    font-size: 2em;
     color: red;
-    font-size: 3em;
-    margin-top: 20px;
     text-shadow: 0 0 15px red, 0 0 30px red;
-    animation: pulse 2s infinite;
+    animation: slideTitle 8s linear infinite;
 }
-@keyframes pulse {
-    0%,100% {text-shadow:0 0 15px red,0 0 30px red;}
-    50% {text-shadow:0 0 25px red,0 0 50px red;}
+@keyframes slideTitle {
+    0% {transform: translateX(-100%);}
+    50% {transform: translateX(0);}
+    100% {transform: translateX(100%);}
 }
+
+/* Überschrift blink */
+h1 span {animation: blink 1s infinite;}
+@keyframes blink {0%,50%,100%{opacity:1;}25%,75%{opacity:0;}}
 
 /* Navbar */
 .navbar {
@@ -69,7 +75,7 @@ h1 {
     margin: 20px auto;
     padding: 20px;
     width: 80%;
-    max-width: 700px;
+    max-width: 600px;
     background: rgba(0,0,0,0.85);
     border-radius: 10px;
     box-shadow: 0 0 20px red;
@@ -77,32 +83,7 @@ h1 {
 }
 .box:hover {box-shadow: 0 0 40px red;}
 
-/* Team Grid */
-.team-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 15px;
-}
-.team-card {
-    background: #111;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px red;
-}
-
-/* Galerie */
-.gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 10px;
-}
-.gallery div {
-    background: #111;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px red;
-}
-
+/* Formulare / Eingaben */
 input, select {
     background: black;
     color: white;
@@ -125,87 +106,57 @@ button {
     border-radius:5px;
 }
 
-button:hover {box-shadow: 0 0 15px red;}
+button:hover { box-shadow: 0 0 15px red; }
 
 #msg {color: lime; margin-top:10px; font-weight:bold;}
 </style>
 </head>
 <body>
 
+<!-- Sterne-Hintergrund -->
 <div class="stars" id="stars"></div>
 
 <div class="navbar">
-<a href="#">Startseite</a>
-<a href="#events">Events</a>
-<a href="#team">Team</a>
-<a href="#gallery">Galerie</a>
+<a href="index.html">Startseite</a>
+<a href="events.html">Aktive Events</a>
 </div>
 
-<h1>⚔️ Willkommen beim Zockerverband ⚔️</h1>
+<!-- Animierter Titel -->
+<h1><span id="animatedTitle">Willkommen auf der Webseite vom Zockerverband</span></h1>
 
-<!-- Hero / Join -->
+<!-- Musik unsichtbar -->
+<audio id="bgMusic" loop style="display:none;">
+  <source src="https://cdn.pixabay.com/download/audio/2021/10/05/audio_0b6b2f2a97.mp3?filename=8-bit-battle-theme-112880.mp3" type="audio/mpeg">
+</audio>
+
 <div class="box">
-<h2>🔥 Tritt unserem Discord bei</h2>
-<p>Werde Teil unserer Community und verpasse keine Events mehr!</p>
-<a href="https://discord.gg/a86FVw4FJa" target="_blank">
-<button>➡️ Jetzt beitreten</button>
-</a>
+<h2>📜 Beschreibung</h2>
+<p>Willkommen auf der Webseite vom Zockerverband! Hier treffen sich Gamer, streamen gemeinsam und nehmen an epischen Events teil – sei dabei und zeige dein Können!</p>
 </div>
 
-<!-- Beschreibung -->
 <div class="box">
-<h2>📜 Über uns</h2>
-<p>Wir sind eine Gaming Community für Minecraft, Fortnite, Roblox, Valorant und mehr. Hier kannst du zocken, neue Leute kennenlernen und an Events teilnehmen.</p>
+<h2>👑 Erstellt von</h2>
+<p>DarkShadow</p>
+<a href="https://discord.gg/a86FVw4FJa" target="_blank">➡️ Server beitreten</a>
 </div>
 
-<!-- Regeln -->
 <div class="box">
-<h2>📏 Regeln</h2>
-<ul>
-<li>Respektiere alle Mitglieder</li>
-<li>Kein Spam oder Beleidigungen</li>
-<li>Höre auf das Team</li>
-</ul>
+<h2>🛠️ Mit erstellt von</h2>
+<p>BanditKaito & Firani</p>
 </div>
 
-<!-- Events -->
-<div class="box" id="events">
-<h2>🎉 Events</h2>
-<p>Regelmäßig finden Events statt wie Among Us, Minecraft Turniere und mehr!</p>
-</div>
-
-<!-- Team -->
-<div class="box" id="team">
-<h2>👑 Team</h2>
-<div class="team-grid">
-<div class="team-card">DarkShadow (Owner)</div>
-<div class="team-card">BanditKaito</div>
-<div class="team-card">Firani</div>
-</div>
-</div>
-
-<!-- Galerie -->
-<div class="box" id="gallery">
-<h2>📸 Galerie</h2>
-<div class="gallery">
-<div>Bild 1</div>
-<div>Bild 2</div>
-<div>Bild 3</div>
-</div>
-</div>
-
-<!-- Event Anmeldung -->
 <div class="box">
-<h2>🎮 Event Anmeldung</h2>
+<h2>🎉 Event Anmeldung</h2>
 <form id="eventForm">
 <input type="text" id="name" placeholder="Dein Name" required><br>
-<input type="text" id="discord" placeholder="Discord Name" required><br>
+<input type="text" id="discord" placeholder="Discord Name (z.B. User#1234)" required><br>
 <select id="event" required>
 <option value="">-- Wähle ein Event --</option>
-<option value="Minecraft">Minecraft</option>
-<option value="Fortnite">Fortnite</option>
-<option value="Among Us">Among Us</option>
-<option value="Valorant">Valorant</option>
+<option value="Minecraft Turnier">Minecraft Turnier</option>
+<option value="Fortnite Battle">Fortnite Battle</option>
+<option value="Roblox Event">Roblox Event</option>
+<option value="Valorant Fun Match">Valorant Fun Match</option>
+<option value="Among us">Among us</option>
 </select><br>
 <button type="submit">Anmelden</button>
 </form>
@@ -215,6 +166,7 @@ button:hover {box-shadow: 0 0 15px red;}
 <script>
 const webhookURL = "https://discord.com/api/webhooks/1485142427965587526/EZcdPCX1d_25vNUe9V1YveoRSRjnx-WEcvRNYVifr4TkD9Sdv6D3SVJXV_q_zqk02YnO";
 
+// Sterne erzeugen
 const starsContainer = document.getElementById('stars');
 for(let i=0;i<100;i++){
     const star = document.createElement('div');
@@ -225,21 +177,30 @@ for(let i=0;i<100;i++){
     starsContainer.appendChild(star);
 }
 
+// Musik automatisch starten bei Nutzerinteraktion
+const music = document.getElementById('bgMusic');
+['click','scroll','mousemove','touchstart'].forEach(evt=>{
+    document.body.addEventListener(evt, function handler(){
+        music.play().catch(()=>{});
+        document.body.removeEventListener(evt, handler);
+    });
+});
+
+// Event-Anmeldung
 document.getElementById("eventForm").addEventListener("submit", function(e){
     e.preventDefault();
     let name = document.getElementById("name").value;
     let discord = document.getElementById("discord").value;
     let event = document.getElementById("event").value;
-
+    if(event === "") {alert("Bitte wähle ein Event aus!"); return;}
     fetch(webhookURL, {
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({
-            content:`Neue Anmeldung! ${name} (${discord}) - ${event}`
+            content:`🎮 **Neue Event Anmeldung!**\n👤 Name: ${name}\n💬 Discord: ${discord}\n🏆 Event: ${event}`
         })
     });
-
-    document.getElementById("msg").innerText = "✅ Gesendet!";
+    document.getElementById("msg").innerText = "✅ Anmeldung gesendet!";
     document.getElementById("eventForm").reset();
 });
 </script>
