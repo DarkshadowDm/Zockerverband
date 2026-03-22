@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Zockerverband</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Courier New', monospace;
+    background: black;
+    color: white;
+    text-align: center;
+}
+
+h1 {
+    color: red;
+    text-shadow: 0 0 15px red;
+}
+
+.box {
+    border: 2px solid white;
+    margin: 20px auto;
+    padding: 20px;
+    width: 80%;
+    max-width: 600px;
+    background: rgba(0,0,0,0.8);
+}
+
+button {
+    background: black;
+    color: red;
+    border: 2px solid red;
+    padding: 10px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: red;
+    color: black;
+}
+
+input {
+    background: black;
+    color: white;
+    border: 1px solid white;
+    padding: 10px;
+    margin: 5px;
+    width: 80%;
+}
+
+a {
+    color: cyan;
+}
+</style>
+
+</head>
+<body>
+
+<h1>⚔️ Zockerverband ⚔️</h1>
+
+<div class="box">
+<h2>📜 Beschreibung</h2>
+<p>Willkommen im Zockerverband! Hier wird gezockt, gestreamt und epische Events veranstaltet.</p>
+</div>
+
+<div class="box">
+<h2>👑 Erstellt von</h2>
+<p>DarkShadow</p>
+<a href="DEIN_DISCORD_LINK" target="_blank">➡️ Server beitreten</a>
+</div>
+
+<div class="box">
+<h2>🛠️ Mit erstellt von</h2>
+<p>Deine Crew hier eintragen</p>
+</div>
+
+<div class="box">
+<h2>🎉 Event Anmeldung</h2>
+
+<form id="eventForm">
+<input type="text" id="name" placeholder="Dein Name" required><br>
+<input type="text" id="discord" placeholder="Discord Name" required><br>
+<button type="submit">ANMELDEN</button>
+</form>
+
+<p id="msg"></p>
+
+</div>
+
+<script>
+const webhookURL = "DEIN_WEBHOOK_LINK";
+
+document.getElementById("eventForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    let name = document.getElementById("name").value;
+    let discord = document.getElementById("discord").value;
+
+    fetch(webhookURL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            content: "🎮 **Neue Event Anmeldung!**\n\n👤 Name: " + name + "\n💬 Discord: " + discord
+        })
+    });
+
+    document.getElementById("msg").innerText = "✅ Anmeldung gesendet!";
+});
+</script>
+
+</body>
+</html>
