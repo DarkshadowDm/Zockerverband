@@ -3,20 +3,46 @@
 <head>
 <meta charset="UTF-8">
 <title>Zockerverband</title>
-
 <style>
 body {
     margin: 0;
     font-family: 'Courier New', monospace;
-    background: black;
+    background: radial-gradient(circle at top, #0d0d0d, #000);
     color: white;
     text-align: center;
+    overflow-x: hidden;
 }
 
 h1 {
     color: red;
-    text-shadow: 0 0 15px red;
+    font-size: 3em;
+    margin-top: 20px;
+    text-shadow: 0 0 15px red, 0 0 30px red;
+    animation: pulse 2s infinite;
 }
+
+@keyframes pulse {
+    0%,100% {text-shadow:0 0 15px red,0 0 30px red;}
+    50% {text-shadow:0 0 25px red,0 0 50px red;}
+}
+
+h1 span {
+    animation: blink 1s infinite;
+}
+@keyframes blink {0%,50%,100%{opacity:1;}25%,75%{opacity:0;}}
+
+.navbar {
+    background: #111;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+.navbar a {
+    color: cyan;
+    margin: 0 10px;
+    text-decoration: none;
+    font-weight: bold;
+}
+.navbar a:hover {text-decoration: underline;}
 
 .box {
     border: 2px solid white;
@@ -24,40 +50,62 @@ h1 {
     padding: 20px;
     width: 80%;
     max-width: 600px;
-    background: rgba(0,0,0,0.8);
+    background: rgba(0,0,0,0.85);
+    border-radius: 10px;
+    box-shadow: 0 0 20px red;
+    transition: 0.5s;
+}
+.box:hover {
+    box-shadow: 0 0 40px red;
+}
+
+input, select {
+    background: black;
+    color: white;
+    border: 1px solid white;
+    padding: 10px;
+    margin: 5px 0;
+    width: 80%;
+    font-size: 1em;
+    border-radius: 5px;
 }
 
 button {
     background: black;
     color: red;
     border: 2px solid red;
-    padding: 10px;
+    padding: 10px 20px;
     cursor: pointer;
+    font-size: 1em;
+    margin-top: 10px;
 }
-
 button:hover {
     background: red;
     color: black;
 }
 
-input {
-    background: black;
-    color: white;
-    border: 1px solid white;
-    padding: 10px;
-    margin: 5px;
-    width: 80%;
-}
-
-a {
-    color: cyan;
-}
+#msg {color: lime; margin-top:10px; font-weight:bold;}
+audio {margin-top:10px;}
 </style>
-
 </head>
 <body>
 
-<h1>⚔️ Zockerverband ⚔️</h1>
+<div class="navbar">
+<a href="index.html">Startseite</a>
+<a href="events.html">Aktive Events</a>
+</div>
+
+<h1>⚔️ <span>Zockerverband</span> ⚔️</h1>
+
+<audio id="bgMusic" autoplay loop>
+  <source src="https://cdn.pixabay.com/download/audio/2021/10/05/audio_0b6b2f2a97.mp3?filename=8-bit-battle-theme-112880.mp3" type="audio/mpeg">
+  Dein Browser unterstützt Audio nicht.
+</audio>
+<div>
+<button onclick="document.getElementById('bgMusic').paused ? document.getElementById('bgMusic').play() : document.getElementById('bgMusic').pause()">
+Play / Pause Musik
+</button>
+</div>
 
 <div class="box">
 <h2>📜 Beschreibung</h2>
@@ -67,47 +115,43 @@ a {
 <div class="box">
 <h2>👑 Erstellt von</h2>
 <p>DarkShadow</p>
-<a href="DEIN_DISCORD_LINK" target="_blank">➡️ Server beitreten</a>
+<a href="https://discord.gg/a86FVw4FJa" target="_blank">➡️ Server beitreten</a>
 </div>
 
 <div class="box">
 <h2>🛠️ Mit erstellt von</h2>
-<p>Deine Crew hier eintragen</p>
+<p>Firani, Bandit, Kaito</p>
 </div>
 
 <div class="box">
 <h2>🎉 Event Anmeldung</h2>
-
 <form id="eventForm">
 <input type="text" id="name" placeholder="Dein Name" required><br>
-<input type="text" id="discord" placeholder="Discord Name" required><br>
+<input type="text" id="discord" placeholder="Discord Name (z.B. User#1234)" required><br>
+<select id="event" required>
+<option value="">-- Wähle ein Event --</option>
+<option value="Minecraft Turnier">Minecraft Turnier</option>
+<option value="Fortnite Battle">Fortnite Battle</option>
+<option value="Roblox Event">Roblox Event</option>
+<option value="Valorant Fun Match">Valorant Fun Match</option>
+</select><br>
 <button type="submit">ANMELDEN</button>
 </form>
-
 <p id="msg"></p>
-
 </div>
 
 <script>
-const webhookURL = "DEIN_WEBHOOK_LINK";
+const webhookURL = "https://discord.com/api/webhooks/1485142427965587526/EZcdPCX1d_25vNUe9V1YveoRSRjnx-WEcvRNYVifr4TkD9Sdv6D3SVJXV_q_zqk02YnO";
 
-document.getElementById("eventForm").addEventListener("submit", function(e) {
+document.getElementById("eventForm").addEventListener("submit", function(e){
     e.preventDefault();
-
     let name = document.getElementById("name").value;
     let discord = document.getElementById("discord").value;
-
-    fetch(webhookURL, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            content: "🎮 **Neue Event Anmeldung!**\n\n👤 Name: " + name + "\n💬 Discord: " + discord
-        })
-    });
-
+    let event = document.getElementById("event").value;
+    if(event === "") {alert("Bitte wähle ein Event aus!"); return;}
+    fetch(webhookURL, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({content:`🎮 **Neue Event Anmeldung!**\n👤 Name: ${name}\n💬 Discord: ${discord}\n🏆 Event: ${event}`})});
     document.getElementById("msg").innerText = "✅ Anmeldung gesendet!";
+    document.getElementById("eventForm").reset();
 });
 </script>
 
