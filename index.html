@@ -9,14 +9,33 @@ body{
  margin:0;
  font-family:Arial;
  color:white;
- background: radial-gradient(circle at top, #ff00cc, #3333ff, #000);
- overflow-x:hidden;
+ background:black;
+ overflow:hidden;
 }
-nav{background:rgba(0,0,0,0.7);padding:15px;display:flex;gap:15px}
-nav a{cursor:pointer}
+
+/* EPIC ANIMATED BACKGROUND */
+body::before{
+ content:"";
+ position:fixed;
+ width:200%;
+ height:200%;
+ background:radial-gradient(circle,#ff00cc,#00ffff,#000);
+ animation:move 10s linear infinite;
+ z-index:-1;
+ opacity:0.4;
+}
+
+@keyframes move{
+ 0%{transform:translate(0,0)}
+ 50%{transform:translate(-25%,-25%)}
+ 100%{transform:translate(0,0)}
+}
+
+nav{background:rgba(0,0,0,0.8);padding:15px;display:flex;gap:15px}
+nav a{cursor:pointer;font-weight:bold}
 section{display:none;padding:30px}
 section.active{display:block}
-.card{background:rgba(0,0,0,0.6);padding:15px;margin:10px 0;border-radius:12px}
+.card{background:rgba(0,0,0,0.7);padding:15px;margin:10px 0;border-radius:12px}
 button{padding:8px;border:none;border-radius:6px;cursor:pointer}
 input{padding:6px;margin:5px;border-radius:6px;border:none}
 </style>
@@ -25,41 +44,48 @@ input{padding:6px;margin:5px;border-radius:6px;border:none}
 
 <nav>
 <a onclick="show('home')">Start</a>
-<a onclick="show('login')">Login</a>
 <a onclick="show('voting')">Voting</a>
 <a onclick="show('events')">Events</a>
 <a onclick="show('partner')">Partner</a>
+<a onclick="show('signup')">Anmelden</a>
+<a onclick="show('dashboard')">Team Dashboard</a>
 </nav>
 
 <section id="home" class="active">
 <h1>Zockerverband</h1>
-<p>Community für Gaming Events und Competition</p>
 <p>Erstellt vom Team Zockerverband</p>
 <h2 id="nextEvent"></h2>
 </section>
 
-<section id="login">
-<h2>Account erstellen / Login</h2>
+<section id="signup">
+<h2>Account (wie Google Login Style)</h2>
 <input id="name" placeholder="Name">
-<button onclick="login()">Login</button>
+<button onclick="login()">Einloggen</button>
 <p id="status"></p>
+<button onclick="connectDiscord()">Discord verbinden</button>
+<p id="discordStatus"></p>
 </section>
 
 <section id="voting">
-<h2>Voting System</h2>
+<h2>Voting</h2>
 <div id="votes"></div>
 </section>
 
 <section id="events">
-<h2>Event Teilnahme</h2>
+<h2>Events (Anmeldung / Abmeldung)</h2>
 <div id="eventList"></div>
 </section>
 
 <section id="partner">
-<h2>Games Partner Suche</h2>
-<input id="partnerInput" placeholder="Suche Spieler">
+<h2>Partner Suche</h2>
+<input id="partnerInput">
 <button onclick="addPartner()">Post</button>
 <div id="partnerList"></div>
+</section>
+
+<section id="dashboard">
+<h2>🔒 Team Dashboard</h2>
+<div id="dashboardContent"></div>
 </section>
 
 <script>
@@ -68,16 +94,38 @@ function show(id){
  document.getElementById(id).classList.add('active');
 }
 
-// LOGIN + SPEICHER
+// LOGIN
 let user=localStorage.getItem('user')||'';
 if(user)document.getElementById('status').innerText='Eingeloggt als '+user;
 
 function login(){
  let n=document.getElementById('name').value;
- if(!n)return alert('Name eingeben');
+ if(!n)return alert('Name!');
  user=n;
  localStorage.setItem('user',n);
  document.getElementById('status').innerText='Eingeloggt als '+n;
+}
+
+// DISCORD WEBHOOK
+const webhookURL="HIER_DEIN_DISCORD_WEBHOOK";
+
+function sendDiscord(msg){
+ fetch(webhookURL,{
+ method:"POST",
+ headers:{"Content-Type":"application/json"},
+ body:JSON.stringify({content:msg})
+ });
+}
+
+// DISCORD CONNECT (SIM)
+let isTeam=false;
+function connectDiscord(){
+ let code=prompt('Team Code (1234)');
+ if(code==='1234'){
+ isTeam=true;
+ document.getElementById('discordStatus').innerText='Verbunden (Team)';
+ loadDashboard();
+ }
 }
 
 // EVENTS
@@ -95,7 +143,7 @@ function renderEvents(){
  events.forEach((e,i)=>{
  let d=document.createElement('div');
  d.className='card';
- d.innerHTML=`<b>${e.name}</b><br>${e.players.join(', ')||'Keine'}<br>
+ d.innerHTML=`${e.name}<br>${e.players.join(', ')||'Keine'}<br>
  <button onclick="join(${i})">Anmelden</button>
  <button onclick="leave(${i})">Abmelden</button>`;
  el.appendChild(d);
@@ -104,11 +152,10 @@ function renderEvents(){
 
 function join(i){
  if(!user)return alert('Login nötig');
- if(confirm('Wirklich anmelden?')){
+ if(confirm('Wirklich teilnehmen?')){
  events[i].players.push(user);
  save();renderEvents();
- sendDiscord(user+' hat sich angemeldet');
- notifyUsers();
+ sendDiscord(user+' hat sich angemeldet für '+events[i].name);
  }
 }
 
@@ -154,6 +201,7 @@ function vote(i){
 function updateWinner(){
  let win=votes.sort((a,b)=>b.v-a.v)[0];
  document.getElementById('nextEvent').innerText='Nächstes Event: '+win.name;
+ sendDiscord('Nächstes Event ist '+win.name);
 }
 
 renderVotes();updateWinner();
@@ -163,28 +211,36 @@ setInterval(()=>{console.log('Voting Update');},7200000);
 setInterval(()=>{
  votes.forEach(v=>v.v=0);
  saveVotes();
- alert('Neue Events im Voting!');
+ alert('Neue Voting Runde!');
  renderVotes();
 },259200000);
 
-// NOTIFY USER
-function notifyUsers(){
- alert('Neues Event bald! Check Startseite');
+// DASHBOARD
+function loadDashboard(){
+ let el=document.getElementById('dashboardContent');
+ if(!isTeam){el.innerHTML='Kein Zugriff';return;}
+ el.innerHTML=`
+ <div class='card'>
+ <button onclick="addEvent()">Event hinzufügen</button>
+ </div>`;
 }
 
-// DISCORD PLACEHOLDER
-function sendDiscord(msg){
- console.log('Discord:',msg);
+function addEvent(){
+ let name=prompt('Event Name');
+ if(!name)return;
+ events.push({name:name,players:[]});
+ save();renderEvents();
+ sendDiscord('Neues Event erstellt: '+name);
 }
 
 // PARTNER
 function addPartner(){
  let t=document.getElementById('partnerInput').value;
- if(!t)return;
  let d=document.createElement('div');
  d.className='card';
  d.innerText=t;
  document.getElementById('partnerList').appendChild(d);
+ sendDiscord('Partner gesucht: '+t);
 }
 
 </script>
