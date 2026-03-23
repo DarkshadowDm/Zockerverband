@@ -12,6 +12,7 @@
     section.active { display:block; }
     button { padding:10px; margin:5px; }
     .card { background:#1e293b; padding:20px; border-radius:10px; margin:10px 0; }
+    input { padding:8px; margin:5px; }
   </style>
 </head>
 <body>
@@ -19,6 +20,7 @@
 <nav>
   <a href="#" onclick="show('home')">Startseite</a>
   <a href="#" onclick="show('events')">Events</a>
+  <a href="#" onclick="show('participation')">Teilnahme</a>
   <a href="#" onclick="show('voting')">Voting</a>
   <a href="#" onclick="show('social')">Social Media</a>
   <a href="#" onclick="show('partner')">Partnersuche</a>
@@ -31,7 +33,19 @@
 </section>
 
 <section id="events">
-  <h1>Events</h1>
+  <h1>Alle Events</h1>
+  <div class="card">Gartic Phone</div>
+  <div class="card">Codenames</div>
+  <div class="card">Film Event</div>
+  <div class="card">Valorant</div>
+  <div class="card">Rainbow Six Siege</div>
+  <div class="card">Fortnite</div>
+  <div class="card">Minecraft</div>
+  <div class="card">Among Us</div>
+</section>
+
+<section id="participation">
+  <h1>Event Teilnahme</h1>
   <div id="eventList"></div>
 </section>
 
@@ -58,10 +72,16 @@ function show(id){
   document.getElementById(id).classList.add('active');
 }
 
-// EVENTS
+// EVENTS MIT TEILNAHME
 let events = [
-  {name:"Fortnite Event", players:[]},
-  {name:"Minecraft Event", players:[]}
+  {name:"Gartic Phone", players:[]},
+  {name:"Codenames", players:[]},
+  {name:"Film Event", players:[]},
+  {name:"Valorant", players:[]},
+  {name:"Rainbow Six Siege", players:[]},
+  {name:"Fortnite", players:[]},
+  {name:"Minecraft", players:[]},
+  {name:"Among Us", players:[]}
 ];
 
 function renderEvents(){
@@ -71,8 +91,8 @@ function renderEvents(){
     let div = document.createElement('div');
     div.className = 'card';
     div.innerHTML = `<h3>${e.name}</h3>
-    <p>Teilnehmer: ${e.players.join(', ')}</p>
-    <input placeholder="Name" id="name${i}">
+    <p>Teilnehmer: ${e.players.join(', ') || 'Keine'}</p>
+    <input placeholder="Dein Name" id="name${i}">
     <button onclick="join(${i})">Anmelden</button>
     <button onclick="leave(${i})">Abmelden</button>`;
     el.appendChild(div);
@@ -81,6 +101,7 @@ function renderEvents(){
 
 function join(i){
   let name = document.getElementById('name'+i).value;
+  if(!name) return alert("Name eingeben!");
   if(confirm("Willst du wirklich teilnehmen?")){
     events[i].players.push(name);
     renderEvents();
@@ -88,61 +109,4 @@ function join(i){
 }
 
 function leave(i){
-  let name = document.getElementById('name'+i).value;
-  let reason = prompt("Warum meldest du dich ab?");
-  events[i].players = events[i].players.filter(p=>p!==name);
-  alert("Abmeldung gespeichert: " + reason);
-  renderEvents();
-}
-
-renderEvents();
-
-// VOTING
-let voteOptions = [
-  {name:"Valorant", votes:0},
-  {name:"Among Us", votes:0},
-  {name:"R6", votes:0}
-];
-
-function renderVotes(){
-  let el = document.getElementById('votes');
-  el.innerHTML='';
-  voteOptions.forEach((v,i)=>{
-    let div = document.createElement('div');
-    div.className='card';
-    div.innerHTML=`${v.name} - ${v.votes} Stimmen <button onclick="vote(${i})">Vote</button>`;
-    el.appendChild(div);
-  });
-}
-
-function vote(i){
-  voteOptions[i].votes++;
-  renderVotes();
-}
-
-renderVotes();
-
-// PARTNER
-function addPartner(){
-  let text = document.getElementById('partnerInput').value;
-  let div = document.createElement('div');
-  div.className='card';
-  div.innerText=text;
-  document.getElementById('partnerList').appendChild(div);
-}
-
-// AUTO UPDATE (2h)
-setInterval(()=>{
-  console.log("Voting aktualisiert");
-}, 7200000);
-
-// RANDOM EVENTS (3 Tage)
-setInterval(()=>{
-  voteOptions.forEach(v=>v.votes=0);
-  alert("Neue Voting Events!");
-  renderVotes();
-}, 259200000);
-</script>
-
-</body>
-</html>
+  let name = document.getElementById('name'+i).v
