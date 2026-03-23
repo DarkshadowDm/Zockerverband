@@ -19,51 +19,26 @@
 
 <nav>
   <a href="#" onclick="show('home')">Startseite</a>
-  <a href="#" onclick="show('events')">Events</a>
+  <a href="#" onclick="show('login')">Login</a>
   <a href="#" onclick="show('participation')">Teilnahme</a>
-  <a href="#" onclick="show('voting')">Voting</a>
-  <a href="#" onclick="show('social')">Social Media</a>
-  <a href="#" onclick="show('partner')">Partnersuche</a>
 </nav>
 
 <section id="home" class="active">
   <h1>Zockerverband</h1>
-  <p>Wir sind der Zockerverband – eine Gaming-Community für gemeinsame Events, Spaß und Competition.</p>
+  <p>Wir sind der Zockerverband – eine Gaming-Community.</p>
   <p>Erstellt vom Team Zockerverband</p>
 </section>
 
-<section id="events">
-  <h1>Alle Events</h1>
-  <div class="card">Gartic Phone</div>
-  <div class="card">Codenames</div>
-  <div class="card">Film Event</div>
-  <div class="card">Valorant</div>
-  <div class="card">Rainbow Six Siege</div>
-  <div class="card">Fortnite</div>
-  <div class="card">Minecraft</div>
-  <div class="card">Among Us</div>
+<section id="login">
+  <h1>Login</h1>
+  <input id="username" placeholder="Name">
+  <button onclick="login()">Login</button>
+  <p id="userStatus"></p>
 </section>
 
 <section id="participation">
   <h1>Event Teilnahme</h1>
   <div id="eventList"></div>
-</section>
-
-<section id="voting">
-  <h1>Voting</h1>
-  <div id="votes"></div>
-</section>
-
-<section id="social">
-  <h1>Social Media</h1>
-  <p>Discord | TikTok | Instagram | Twitch</p>
-</section>
-
-<section id="partner">
-  <h1>Partnersuche</h1>
-  <input id="partnerInput" placeholder="Suche Team oder Spieler">
-  <button onclick="addPartner()">Posten</button>
-  <div id="partnerList"></div>
 </section>
 
 <script>
@@ -72,8 +47,24 @@ function show(id){
   document.getElementById(id).classList.add('active');
 }
 
-// EVENTS MIT TEILNAHME
-let events = [
+// LOGIN SYSTEM
+let currentUser = localStorage.getItem("user") || "";
+
+function login(){
+  let name = document.getElementById("username").value;
+  if(!name) return alert("Name eingeben!");
+  localStorage.setItem("user", name);
+  currentUser = name;
+  document.getElementById("userStatus").innerText = "Eingeloggt als: " + name;
+  renderEvents();
+}
+
+if(currentUser){
+  document.getElementById("userStatus").innerText = "Eingeloggt als: " + currentUser;
+}
+
+// EVENTS + SPEICHERUNG
+let events = JSON.parse(localStorage.getItem("events")) || [
   {name:"Gartic Phone", players:[]},
   {name:"Codenames", players:[]},
   {name:"Film Event", players:[]},
@@ -84,6 +75,10 @@ let events = [
   {name:"Among Us", players:[]}
 ];
 
+function save(){
+  localStorage.setItem("events", JSON.stringify(events));
+}
+
 function renderEvents(){
   let el = document.getElementById('eventList');
   el.innerHTML = '';
@@ -92,7 +87,6 @@ function renderEvents(){
     div.className = 'card';
     div.innerHTML = `<h3>${e.name}</h3>
     <p>Teilnehmer: ${e.players.join(', ') || 'Keine'}</p>
-    <input placeholder="Dein Name" id="name${i}">
     <button onclick="join(${i})">Anmelden</button>
     <button onclick="leave(${i})">Abmelden</button>`;
     el.appendChild(div);
@@ -100,13 +94,27 @@ function renderEvents(){
 }
 
 function join(i){
-  let name = document.getElementById('name'+i).value;
-  if(!name) return alert("Name eingeben!");
+  if(!currentUser) return alert("Bitte zuerst einloggen!");
   if(confirm("Willst du wirklich teilnehmen?")){
-    events[i].players.push(name);
-    renderEvents();
+    if(!events[i].players.includes(currentUser)){
+      events[i].players.push(currentUser);
+      save();
+      renderEvents();
+    }
   }
 }
 
 function leave(i){
-  let name = document.getElementById('name'+i).v
+  if(!currentUser) return alert("Bitte zuerst einloggen!");
+  let reason = prompt("Warum meldest du dich ab?");
+  events[i].players = events[i].players.filter(p=>p!==currentUser);
+  save();
+  alert("Abmeldung gespeichert: " + reason);
+  renderEvents();
+}
+
+renderEvents();
+</script>
+
+</body>
+</html>
