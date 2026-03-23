@@ -1,122 +1,129 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zockerverband</title>
-<style>
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #1a1a1a, #0d0d0d);
-  color: #333;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  flex-direction: column;
-}
+import React, { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
-/* GOOGLE STYLE LOGIN */
-#loginContainer {
-  background: white;
-  padding: 60px;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-  text-align: center;
-  width: 90%;
-  max-width: 400px;
-}
-#loginContainer h1 {
-  margin-bottom: 30px;
-  color: #202124;
-}
-#loginContainer input {
-  width: 80%;
-  padding: 12px;
-  margin: 10px 0;
-  border-radius: 24px;
-  border: 1px solid #ccc;
-  font-size: 16px;
-}
-#loginContainer button {
-  width: 85%;
-  padding: 12px;
-  margin-top: 20px;
-  border-radius: 24px;
-  border: none;
-  background-color: #1a73e8;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-}
-#loginContainer button:hover {
-  background-color: #155ab6;
-}
-#navBar {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-  padding: 15px;
-  background: rgba(255,255,255,0.9);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-#navBar a {
-  text-decoration: none;
-  color: #1a73e8;
-  font-weight: bold;
-  font-size: 16px;
-}
-</style>
-</head>
-<body>
+export default function ZKVWebsite() {
+  const [teams, setTeams] = useState([]);
+  const [teamName, setTeamName] = useState("");
 
-<div id="navBar">
-  <a onclick="show('home')">Start</a>
-  <a onclick="show('voting')">Voting</a>
-  <a onclick="show('events')">Events</a>
-  <a onclick="show('partner')">Partner Suche</a>
-  <a onclick="show('signup')">Anmelden</a>
-  <a onclick="show('dashboard')">Team Dashboard</a>
-</div>
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [password, setPassword] = useState("");
 
-<section id="home" class="active">
-  <h1>Zockerverband</h1>
-  <p>Erstellt vom Team Zockerverband</p>
-  <h2 id="nextEvent"></h2>
-</section>
+  const ADMIN_PASSWORD = "ZKV123"; // später Backend!
 
-<section id="signup">
-  <div id="loginContainer">
-    <h1>Willkommen</h1>
-    <input id="name" placeholder="Name">
-    <button onclick="login()">Einloggen</button>
-    <p id="status"></p>
-    <button onclick="connectDiscord()">Mit Discord verbinden</button>
-    <p id="discordStatus"></p>
-  </div>
-</section>
+  const login = () => {
+    if (password === ADMIN_PASSWORD) {
+      setIsAdmin(true);
+    } else {
+      alert("Falsches Passwort");
+    }
+  };
 
-<section id="voting">
-  <h2>Voting</h2>
-  <div id="votes"></div>
-</section>
+  const addTeam = () => {
+    if (!teamName) return;
+    setTeams([...teams, { name: teamName, points: 0 }]);
+    setTeamName("");
+  };
 
-<section id="events">
-  <h2>Events</h2>
-  <div id="eventList"></div>
-</section>
+  const addPoints = (index) => {
+    const updated = [...teams];
+    updated[index].points += 1;
+    setTeams(updated);
+  };
 
-<section id="partner">
-  <h2>Partner Suche</h2>
-  <input id="partnerInput" placeholder="Suche Spieler">
-  <button onclick="addPartner()">Post</button>
-  <div id="partnerList"></div>
-</section>
+  return (
+    <div className="min-h-screen bg-black text-white p-6 grid gap-6">
+      <h1 className="text-4xl font-bold text-center">ZKV Gaming Verband</h1>
 
-<section id="dashboard">
-  <h2>Team Dashboard</h2>
-  <div id="
+      {/* LOGIN */}
+      {!isAdmin && (
+        <Card className="bg-gray-900">
+          <CardContent className="p-4">
+            <h2 className="text-2xl">Admin Login</h2>
+            <input
+              type="password"
+              className="text-black p-2 rounded mt-2"
+              placeholder="Passwort"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <Button className="mt-2" onClick={login}>Login</Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* DASHBOARD */}
+      {isAdmin && (
+        <Card className="bg-red-900">
+          <CardContent className="p-4">
+            <h2 className="text-2xl">Admin Dashboard</h2>
+            <p>Hier steuerst du ALLES:</p>
+            <ul className="list-disc ml-5 mt-2">
+              <li>Teams verwalten</li>
+              <li>Turniere starten</li>
+              <li>Punkte vergeben</li>
+              <li>Streams steuern</li>
+              <li>Entbannungen prüfen</li>
+            </ul>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* TEAM ANMELDUNG */}
+      <Card className="bg-gray-900">
+        <CardContent className="p-4">
+          <h2 className="text-2xl">Team Anmeldung</h2>
+          <div className="flex gap-2 mt-2">
+            <input
+              className="text-black p-2 rounded"
+              placeholder="Team Name"
+              value={teamName}
+              onChange={(e) => setTeamName(e.target.value)}
+            />
+            <Button onClick={addTeam}>Anmelden</Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* TEAMS + ADMIN CONTROL */}
+      <Card className="bg-gray-900">
+        <CardContent className="p-4">
+          <h2 className="text-2xl">Teams</h2>
+          <ul className="mt-2">
+            {teams.map((team, i) => (
+              <li key={i} className="flex justify-between">
+                {team.name} - {team.points} Punkte
+                {isAdmin && (
+                  <Button onClick={() => addPoints(i)}>+ Punkt</Button>
+                )}
+              </li>
+            ))}
+          </ul>
+        </CardContent>
+      </Card>
+
+      {/* LIVESTREAM */}
+      <Card className="bg-gray-900">
+        <CardContent className="p-4">
+          <h2 className="text-2xl">Livestream</h2>
+          <iframe
+            src="https://player.twitch.tv/?channel=riotgames&parent=localhost"
+            height="300"
+            width="100%"
+            allowFullScreen
+          ></iframe>
+        </CardContent>
+      </Card>
+
+      {/* ENTBANNUNG */}
+      <Card className="bg-gray-900">
+        <CardContent className="p-4">
+          <h2 className="text-2xl">Entbannungsantrag</h2>
+          <input className="text-black p-2 rounded w-full mt-2" placeholder="Discord Name" />
+          <textarea className="text-black p-2 rounded w-full mt-2" placeholder="Grund"></textarea>
+          <Button className="mt-2">Absenden</Button>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
