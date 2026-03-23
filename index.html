@@ -5,14 +5,44 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Zockerverband</title>
   <style>
-    body { font-family: Arial; margin:0; background:#0f172a; color:white; }
-    nav { background:#020617; padding:15px; display:flex; gap:20px; }
-    nav a { color:white; text-decoration:none; }
+    body {
+      font-family: Arial;
+      margin:0;
+      color:white;
+      background: linear-gradient(270deg, #020617, #0f172a, #1e293b, #020617);
+      background-size: 800% 800%;
+      animation: gradientMove 15s ease infinite;
+    }
+
+    @keyframes gradientMove {
+      0% {background-position:0% 50%}
+      50% {background-position:100% 50%}
+      100% {background-position:0% 50%}
+    }
+
+    nav { background:rgba(0,0,0,0.6); padding:15px; display:flex; gap:20px; }
+    nav a { color:white; text-decoration:none; font-weight:bold; }
+
     section { padding:40px; display:none; }
     section.active { display:block; }
-    button { padding:10px; margin:5px; }
-    .card { background:#1e293b; padding:20px; border-radius:10px; margin:10px 0; }
-    input { padding:8px; margin:5px; }
+
+    button {
+      padding:10px;
+      margin:5px;
+      border:none;
+      border-radius:8px;
+      cursor:pointer;
+    }
+
+    .card {
+      background:rgba(30,41,59,0.8);
+      padding:20px;
+      border-radius:15px;
+      margin:10px 0;
+      box-shadow:0 0 15px rgba(0,0,0,0.5);
+    }
+
+    input { padding:8px; margin:5px; border-radius:6px; border:none; }
   </style>
 </head>
 <body>
@@ -21,11 +51,12 @@
   <a href="#" onclick="show('home')">Startseite</a>
   <a href="#" onclick="show('login')">Login</a>
   <a href="#" onclick="show('participation')">Teilnahme</a>
+  <a href="#" onclick="show('voting')">Voting</a>
 </nav>
 
 <section id="home" class="active">
   <h1>Zockerverband</h1>
-  <p>Wir sind der Zockerverband – eine Gaming-Community.</p>
+  <p>Gaming-Community für Events, Spaß und Competition.</p>
   <p>Erstellt vom Team Zockerverband</p>
 </section>
 
@@ -41,13 +72,18 @@
   <div id="eventList"></div>
 </section>
 
+<section id="voting">
+  <h1>Voting (Community entscheidet)</h1>
+  <div id="votes"></div>
+</section>
+
 <script>
 function show(id){
   document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
 
-// LOGIN SYSTEM
+// LOGIN
 let currentUser = localStorage.getItem("user") || "";
 
 function login(){
@@ -63,7 +99,7 @@ if(currentUser){
   document.getElementById("userStatus").innerText = "Eingeloggt als: " + currentUser;
 }
 
-// EVENTS + SPEICHERUNG
+// EVENTS
 let events = JSON.parse(localStorage.getItem("events")) || [
   {name:"Gartic Phone", players:[]},
   {name:"Codenames", players:[]},
@@ -94,8 +130,8 @@ function renderEvents(){
 }
 
 function join(i){
-  if(!currentUser) return alert("Bitte zuerst einloggen!");
-  if(confirm("Willst du wirklich teilnehmen?")){
+  if(!currentUser) return alert("Bitte einloggen!");
+  if(confirm("Teilnehmen?")){
     if(!events[i].players.includes(currentUser)){
       events[i].players.push(currentUser);
       save();
@@ -105,16 +141,26 @@ function join(i){
 }
 
 function leave(i){
-  if(!currentUser) return alert("Bitte zuerst einloggen!");
-  let reason = prompt("Warum meldest du dich ab?");
+  if(!currentUser) return alert("Bitte einloggen!");
+  let reason = prompt("Warum gehst du?");
   events[i].players = events[i].players.filter(p=>p!==currentUser);
   save();
-  alert("Abmeldung gespeichert: " + reason);
+  alert("Abmeldung: " + reason);
   renderEvents();
 }
 
 renderEvents();
-</script>
 
-</body>
-</html>
+// VOTING SYSTEM
+let voteOptions = JSON.parse(localStorage.getItem("votes")) || [
+  {name:"Valorant", votes:0},
+  {name:"Among Us", votes:0},
+  {name:"Fortnite", votes:0},
+  {name:"Minecraft", votes:0}
+];
+
+function saveVotes(){
+  localStorage.setItem("votes", JSON.stringify(voteOptions));
+}
+
+function render
