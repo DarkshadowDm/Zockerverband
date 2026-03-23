@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zockerverband</title>
+  <style>
+    body { font-family: Arial; margin:0; background:#0f172a; color:white; }
+    nav { background:#020617; padding:15px; display:flex; gap:20px; }
+    nav a { color:white; text-decoration:none; }
+    section { padding:40px; display:none; }
+    section.active { display:block; }
+    button { padding:10px; margin:5px; }
+    .card { background:#1e293b; padding:20px; border-radius:10px; margin:10px 0; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="#" onclick="show('home')">Startseite</a>
+  <a href="#" onclick="show('events')">Events</a>
+  <a href="#" onclick="show('voting')">Voting</a>
+  <a href="#" onclick="show('social')">Social Media</a>
+  <a href="#" onclick="show('partner')">Partnersuche</a>
+</nav>
+
+<section id="home" class="active">
+  <h1>Zockerverband</h1>
+  <p>Wir sind der Zockerverband – eine Gaming-Community für gemeinsame Events, Spaß und Competition.</p>
+  <p>Erstellt vom Team Zockerverband</p>
+</section>
+
+<section id="events">
+  <h1>Events</h1>
+  <div id="eventList"></div>
+</section>
+
+<section id="voting">
+  <h1>Voting</h1>
+  <div id="votes"></div>
+</section>
+
+<section id="social">
+  <h1>Social Media</h1>
+  <p>Discord | TikTok | Instagram | Twitch</p>
+</section>
+
+<section id="partner">
+  <h1>Partnersuche</h1>
+  <input id="partnerInput" placeholder="Suche Team oder Spieler">
+  <button onclick="addPartner()">Posten</button>
+  <div id="partnerList"></div>
+</section>
+
+<script>
+function show(id){
+  document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// EVENTS
+let events = [
+  {name:"Fortnite Event", players:[]},
+  {name:"Minecraft Event", players:[]}
+];
+
+function renderEvents(){
+  let el = document.getElementById('eventList');
+  el.innerHTML = '';
+  events.forEach((e,i)=>{
+    let div = document.createElement('div');
+    div.className = 'card';
+    div.innerHTML = `<h3>${e.name}</h3>
+    <p>Teilnehmer: ${e.players.join(', ')}</p>
+    <input placeholder="Name" id="name${i}">
+    <button onclick="join(${i})">Anmelden</button>
+    <button onclick="leave(${i})">Abmelden</button>`;
+    el.appendChild(div);
+  });
+}
+
+function join(i){
+  let name = document.getElementById('name'+i).value;
+  if(confirm("Willst du wirklich teilnehmen?")){
+    events[i].players.push(name);
+    renderEvents();
+  }
+}
+
+function leave(i){
+  let name = document.getElementById('name'+i).value;
+  let reason = prompt("Warum meldest du dich ab?");
+  events[i].players = events[i].players.filter(p=>p!==name);
+  alert("Abmeldung gespeichert: " + reason);
+  renderEvents();
+}
+
+renderEvents();
+
+// VOTING
+let voteOptions = [
+  {name:"Valorant", votes:0},
+  {name:"Among Us", votes:0},
+  {name:"R6", votes:0}
+];
+
+function renderVotes(){
+  let el = document.getElementById('votes');
+  el.innerHTML='';
+  voteOptions.forEach((v,i)=>{
+    let div = document.createElement('div');
+    div.className='card';
+    div.innerHTML=`${v.name} - ${v.votes} Stimmen <button onclick="vote(${i})">Vote</button>`;
+    el.appendChild(div);
+  });
+}
+
+function vote(i){
+  voteOptions[i].votes++;
+  renderVotes();
+}
+
+renderVotes();
+
+// PARTNER
+function addPartner(){
+  let text = document.getElementById('partnerInput').value;
+  let div = document.createElement('div');
+  div.className='card';
+  div.innerText=text;
+  document.getElementById('partnerList').appendChild(div);
+}
+
+// AUTO UPDATE (2h)
+setInterval(()=>{
+  console.log("Voting aktualisiert");
+}, 7200000);
+
+// RANDOM EVENTS (3 Tage)
+setInterval(()=>{
+  voteOptions.forEach(v=>v.votes=0);
+  alert("Neue Voting Events!");
+  renderVotes();
+}, 259200000);
+</script>
+
+</body>
+</html>
