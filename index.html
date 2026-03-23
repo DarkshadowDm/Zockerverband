@@ -5,26 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Zockerverband</title>
 <style>
-body {
-  font-family: Arial;
-  margin:0;
-  color:white;
-  background: linear-gradient(270deg,#020617,#0f172a,#1e293b,#020617);
-  background-size:800% 800%;
-  animation:bg 15s ease infinite;
+body{
+ margin:0;
+ font-family:Arial;
+ color:white;
+ background: radial-gradient(circle at top, #ff00cc, #3333ff, #000);
+ overflow-x:hidden;
 }
-@keyframes bg {
-  0%{background-position:0% 50%}
-  50%{background-position:100% 50%}
-  100%{background-position:0% 50%}
-}
-nav {background:rgba(0,0,0,0.7);padding:15px;display:flex;gap:15px}
-nav a {color:white;text-decoration:none;font-weight:bold}
-section {display:none;padding:30px}
-section.active {display:block}
-.card {background:rgba(30,41,59,0.8);padding:15px;margin:10px 0;border-radius:12px}
-button {padding:8px;border:none;border-radius:6px;cursor:pointer}
-input {padding:6px;margin:5px;border-radius:6px;border:none}
+nav{background:rgba(0,0,0,0.7);padding:15px;display:flex;gap:15px}
+nav a{cursor:pointer}
+section{display:none;padding:30px}
+section.active{display:block}
+.card{background:rgba(0,0,0,0.6);padding:15px;margin:10px 0;border-radius:12px}
+button{padding:8px;border:none;border-radius:6px;cursor:pointer}
+input{padding:6px;margin:5px;border-radius:6px;border:none}
 </style>
 </head>
 <body>
@@ -32,40 +26,40 @@ input {padding:6px;margin:5px;border-radius:6px;border:none}
 <nav>
 <a onclick="show('home')">Start</a>
 <a onclick="show('login')">Login</a>
-<a onclick="show('events')">Events</a>
 <a onclick="show('voting')">Voting</a>
-<a onclick="show('admin')">Admin</a>
+<a onclick="show('events')">Events</a>
+<a onclick="show('partner')">Partner</a>
 </nav>
 
 <section id="home" class="active">
 <h1>Zockerverband</h1>
-<p>Gaming Community für Events & Competition</p>
+<p>Community für Gaming Events und Competition</p>
 <p>Erstellt vom Team Zockerverband</p>
-<h3 id="nextEvent"></h3>
+<h2 id="nextEvent"></h2>
 </section>
 
 <section id="login">
-<h2>Login</h2>
+<h2>Account erstellen / Login</h2>
 <input id="name" placeholder="Name">
 <button onclick="login()">Login</button>
 <p id="status"></p>
 </section>
 
+<section id="voting">
+<h2>Voting System</h2>
+<div id="votes"></div>
+</section>
+
 <section id="events">
-<h2>Events</h2>
+<h2>Event Teilnahme</h2>
 <div id="eventList"></div>
 </section>
 
-<section id="voting">
-<h2>Voting</h2>
-<div id="voteList"></div>
-</section>
-
-<section id="admin">
-<h2>Admin Panel</h2>
-<input id="newEvent" placeholder="Neues Event">
-<button onclick="addEvent()">Event hinzufügen</button>
-<div id="adminEvents"></div>
+<section id="partner">
+<h2>Games Partner Suche</h2>
+<input id="partnerInput" placeholder="Suche Spieler">
+<button onclick="addPartner()">Post</button>
+<div id="partnerList"></div>
 </section>
 
 <script>
@@ -74,18 +68,20 @@ function show(id){
  document.getElementById(id).classList.add('active');
 }
 
-let user = localStorage.getItem('user') || '';
-if(user) document.getElementById('status').innerText = "Eingeloggt als: "+user;
+// LOGIN + SPEICHER
+let user=localStorage.getItem('user')||'';
+if(user)document.getElementById('status').innerText='Eingeloggt als '+user;
 
 function login(){
  let n=document.getElementById('name').value;
- if(!n)return alert('Name!');
+ if(!n)return alert('Name eingeben');
  user=n;
  localStorage.setItem('user',n);
- document.getElementById('status').innerText="Eingeloggt als: "+n;
+ document.getElementById('status').innerText='Eingeloggt als '+n;
 }
 
-let events = JSON.parse(localStorage.getItem('events')) || [
+// EVENTS
+let events=JSON.parse(localStorage.getItem('events'))||[
 {name:'Fortnite',players:[]},
 {name:'Minecraft',players:[]},
 {name:'Valorant',players:[]}
@@ -99,34 +95,37 @@ function renderEvents(){
  events.forEach((e,i)=>{
  let d=document.createElement('div');
  d.className='card';
- d.innerHTML=`<b>${e.name}</b><br>Teilnehmer: ${e.players.join(', ')||'Keine'}<br>
- <button onclick="join(${i})">Join</button>
- <button onclick="leave(${i})">Leave</button>`;
+ d.innerHTML=`<b>${e.name}</b><br>${e.players.join(', ')||'Keine'}<br>
+ <button onclick="join(${i})">Anmelden</button>
+ <button onclick="leave(${i})">Abmelden</button>`;
  el.appendChild(d);
  });
 }
 
 function join(i){
  if(!user)return alert('Login nötig');
- if(confirm('Wirklich teilnehmen?')){
- if(!events[i].players.includes(user)){
+ if(confirm('Wirklich anmelden?')){
  events[i].players.push(user);
  save();renderEvents();
- }
+ sendDiscord(user+' hat sich angemeldet');
+ notifyUsers();
  }
 }
 
 function leave(i){
  if(!user)return alert('Login nötig');
+ if(confirm('Wirklich abmelden?')){
  let reason=prompt('Grund?');
  events[i].players=events[i].players.filter(p=>p!==user);
- save();alert('Abmeldung: '+reason);renderEvents();
+ save();renderEvents();
+ sendDiscord(user+' hat sich abgemeldet: '+reason);
+ }
 }
 
 renderEvents();
 
 // VOTING
-let votes = JSON.parse(localStorage.getItem('votes')) || [
+let votes=JSON.parse(localStorage.getItem('votes'))||[
 {name:'Fortnite',v:0},
 {name:'Minecraft',v:0},
 {name:'Valorant',v:0}
@@ -135,7 +134,7 @@ let votes = JSON.parse(localStorage.getItem('votes')) || [
 function saveVotes(){localStorage.setItem('votes',JSON.stringify(votes));}
 
 function renderVotes(){
- let el=document.getElementById('voteList');
+ let el=document.getElementById('votes');
  el.innerHTML='';
  votes.forEach((v,i)=>{
  let d=document.createElement('div');
@@ -145,56 +144,50 @@ function renderVotes(){
  });
 }
 
-function vote(i){votes[i].v++;saveVotes();renderVotes();updateNext();}
-
-renderVotes();
-
-function updateNext(){
- let top=votes.sort((a,b)=>b.v-a.v)[0];
- document.getElementById('nextEvent').innerText="Nächstes Event: "+top.name;
-}
-updateNext();
-
-// ADMIN
-function addEvent(){
- let name=document.getElementById('newEvent').value;
- if(!name)return;
- events.push({name:name,players:[]});
- save();renderEvents();renderAdmin();
+function vote(i){
+ votes[i].v++;
+ saveVotes();
+ renderVotes();
+ updateWinner();
 }
 
-function renderAdmin(){
- let el=document.getElementById('adminEvents');
- el.innerHTML='';
- events.forEach((e,i)=>{
- let d=document.createElement('div');
- d.className='card';
- d.innerHTML=`${e.name} <button onclick="deleteEvent(${i})">Löschen</button>`;
- el.appendChild(d);
- });
+function updateWinner(){
+ let win=votes.sort((a,b)=>b.v-a.v)[0];
+ document.getElementById('nextEvent').innerText='Nächstes Event: '+win.name;
 }
 
-function deleteEvent(i){
- events.splice(i,1);
- save();renderEvents();renderAdmin();
-}
+renderVotes();updateWinner();
 
-renderAdmin();
-
-// AUTO SYSTEME
+// AUTO SYSTEM
 setInterval(()=>{console.log('Voting Update');},7200000);
 setInterval(()=>{
  votes.forEach(v=>v.v=0);
  saveVotes();
- alert('Neue Voting Runde!');
+ alert('Neue Events im Voting!');
  renderVotes();
 },259200000);
 
-// DISCORD BOT PLACEHOLDER
+// NOTIFY USER
+function notifyUsers(){
+ alert('Neues Event bald! Check Startseite');
+}
+
+// DISCORD PLACEHOLDER
 function sendDiscord(msg){
- console.log('Discord Nachricht:',msg);
+ console.log('Discord:',msg);
+}
+
+// PARTNER
+function addPartner(){
+ let t=document.getElementById('partnerInput').value;
+ if(!t)return;
+ let d=document.createElement('div');
+ d.className='card';
+ d.innerText=t;
+ document.getElementById('partnerList').appendChild(d);
 }
 
 </script>
+
 </body>
 </html>
