@@ -12,11 +12,8 @@ export default function ZKVWebsite() {
   const ADMIN_PASSWORD = "ZKV123";
 
   const login = () => {
-    if (password === ADMIN_PASSWORD) {
-      setIsAdmin(true);
-    } else {
-      alert("Falsches Passwort");
-    }
+    if (password === ADMIN_PASSWORD) setIsAdmin(true);
+    else alert("Falsches Passwort");
   };
 
   const addTeam = () => {
@@ -25,24 +22,116 @@ export default function ZKVWebsite() {
     setTeamName("");
   };
 
-  const addPoints = (index) => {
-    const updated = [...teams];
-    updated[index].points += 1;
-    setTeams(updated);
+  const addPoints = (i) => {
+    const copy = [...teams];
+    copy[i].points++;
+    setTeams(copy);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white p-6">
-      {/* HEADER */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="text-center mb-10"
-      >
-        <h1 className="text-5xl font-extrabold tracking-wide text-red-500">ZKV</h1>
-        <p className="text-gray-400 mt-2">Gaming Verband & Turnier Plattform</p>
-      </motion.div>
+    <div className="min-h-screen bg-black text-white">
+      {/* NAVBAR */}
+      <div className="flex justify-between items-center p-4 border-b border-gray-800 bg-black/80 backdrop-blur">
+        <h1 className="text-2xl font-bold text-red-500">ZKV</h1>
+        <div className="flex gap-4">
+          <span className="hover:text-red-500 cursor-pointer">Home</span>
+          <span className="hover:text-red-500 cursor-pointer">Turniere</span>
+          <span className="hover:text-red-500 cursor-pointer">Live</span>
+          <span className="hover:text-red-500 cursor-pointer">Teams</span>
+        </div>
+      </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
+      {/* HERO SECTION */}
+      <div className="text-center py-16 px-4">
+        <motion.h1
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-5xl font-extrabold text-red-500"
+        >
+          ZKV GAMING
+        </motion.h1>
+        <p className="text-gray-400 mt-4 text-lg">
+          Turniere • Streams • Community
+        </p>
+        <Button className="mt-6 text-lg px-6 py-2">Jetzt beitreten</Button>
+      </div>
+
+      {/* MAIN GRID */}
+      <div className="grid md:grid-cols-3 gap-6 p-6">
 
         {/* LOGIN */}
+        {!isAdmin && (
+          <Card className="bg-gray-900 border border-gray-800">
+            <CardContent className="p-4">
+              <h2 className="mb-2">Admin Login</h2>
+              <input
+                type="password"
+                className="w-full p-2 text-black rounded"
+                placeholder="Passwort"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <Button className="mt-2 w-full" onClick={login}>Login</Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* TEAM ADD */}
+        <Card className="bg-gray-900 border border-gray-800">
+          <CardContent className="p-4">
+            <h2 className="mb-2">Team anmelden</h2>
+            <div className="flex gap-2">
+              <input
+                className="p-2 text-black rounded w-full"
+                placeholder="Teamname"
+                value={teamName}
+                onChange={(e) => setTeamName(e.target.value)}
+              />
+              <Button onClick={addTeam}>+</Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* STREAM */}
+        <Card className="bg-gray-900 border border-gray-800 md:col-span-1">
+          <CardContent className="p-4">
+            <h2 className="mb-2">Live</h2>
+            <iframe
+              src="https://player.twitch.tv/?channel=riotgames&parent=localhost"
+              height="200"
+              width="100%"
+            ></iframe>
+          </CardContent>
+        </Card>
+
+        {/* TEAMS LIST */}
+        <Card className="bg-gray-900 border border-gray-800 md:col-span-2">
+          <CardContent className="p-4">
+            <h2 className="mb-2">Teams</h2>
+            <div className="grid gap-2">
+              {teams.map((t, i) => (
+                <div key={i} className="flex justify-between bg-black p-2 rounded">
+                  <span>{t.name} ({t.points})</span>
+                  {isAdmin && (
+                    <Button size="sm" onClick={() => addPoints(i)}>+1</Button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* ADMIN PANEL */}
+        {isAdmin && (
+          <Card className="bg-red-900 border border-red-700 md:col-span-3">
+            <CardContent className="p-4">
+              <h2>Admin Dashboard</h2>
+              <p className="text-sm text-gray-300">Du kannst jetzt alles steuern</p>
+            </CardContent>
+          </Card>
+        )}
+
+      </div>
+    </div>
+  );
+}
