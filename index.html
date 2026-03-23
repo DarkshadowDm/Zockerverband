@@ -1,166 +1,200 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zockerverband</title>
-  <style>
-    body {
-      font-family: Arial;
-      margin:0;
-      color:white;
-      background: linear-gradient(270deg, #020617, #0f172a, #1e293b, #020617);
-      background-size: 800% 800%;
-      animation: gradientMove 15s ease infinite;
-    }
-
-    @keyframes gradientMove {
-      0% {background-position:0% 50%}
-      50% {background-position:100% 50%}
-      100% {background-position:0% 50%}
-    }
-
-    nav { background:rgba(0,0,0,0.6); padding:15px; display:flex; gap:20px; }
-    nav a { color:white; text-decoration:none; font-weight:bold; }
-
-    section { padding:40px; display:none; }
-    section.active { display:block; }
-
-    button {
-      padding:10px;
-      margin:5px;
-      border:none;
-      border-radius:8px;
-      cursor:pointer;
-    }
-
-    .card {
-      background:rgba(30,41,59,0.8);
-      padding:20px;
-      border-radius:15px;
-      margin:10px 0;
-      box-shadow:0 0 15px rgba(0,0,0,0.5);
-    }
-
-    input { padding:8px; margin:5px; border-radius:6px; border:none; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zockerverband</title>
+<style>
+body {
+  font-family: Arial;
+  margin:0;
+  color:white;
+  background: linear-gradient(270deg,#020617,#0f172a,#1e293b,#020617);
+  background-size:800% 800%;
+  animation:bg 15s ease infinite;
+}
+@keyframes bg {
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+nav {background:rgba(0,0,0,0.7);padding:15px;display:flex;gap:15px}
+nav a {color:white;text-decoration:none;font-weight:bold}
+section {display:none;padding:30px}
+section.active {display:block}
+.card {background:rgba(30,41,59,0.8);padding:15px;margin:10px 0;border-radius:12px}
+button {padding:8px;border:none;border-radius:6px;cursor:pointer}
+input {padding:6px;margin:5px;border-radius:6px;border:none}
+</style>
 </head>
 <body>
 
 <nav>
-  <a href="#" onclick="show('home')">Startseite</a>
-  <a href="#" onclick="show('login')">Login</a>
-  <a href="#" onclick="show('participation')">Teilnahme</a>
-  <a href="#" onclick="show('voting')">Voting</a>
+<a onclick="show('home')">Start</a>
+<a onclick="show('login')">Login</a>
+<a onclick="show('events')">Events</a>
+<a onclick="show('voting')">Voting</a>
+<a onclick="show('admin')">Admin</a>
 </nav>
 
 <section id="home" class="active">
-  <h1>Zockerverband</h1>
-  <p>Gaming-Community für Events, Spaß und Competition.</p>
-  <p>Erstellt vom Team Zockerverband</p>
+<h1>Zockerverband</h1>
+<p>Gaming Community für Events & Competition</p>
+<p>Erstellt vom Team Zockerverband</p>
+<h3 id="nextEvent"></h3>
 </section>
 
 <section id="login">
-  <h1>Login</h1>
-  <input id="username" placeholder="Name">
-  <button onclick="login()">Login</button>
-  <p id="userStatus"></p>
+<h2>Login</h2>
+<input id="name" placeholder="Name">
+<button onclick="login()">Login</button>
+<p id="status"></p>
 </section>
 
-<section id="participation">
-  <h1>Event Teilnahme</h1>
-  <div id="eventList"></div>
+<section id="events">
+<h2>Events</h2>
+<div id="eventList"></div>
 </section>
 
 <section id="voting">
-  <h1>Voting (Community entscheidet)</h1>
-  <div id="votes"></div>
+<h2>Voting</h2>
+<div id="voteList"></div>
+</section>
+
+<section id="admin">
+<h2>Admin Panel</h2>
+<input id="newEvent" placeholder="Neues Event">
+<button onclick="addEvent()">Event hinzufügen</button>
+<div id="adminEvents"></div>
 </section>
 
 <script>
 function show(id){
-  document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+ document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
 }
 
-// LOGIN
-let currentUser = localStorage.getItem("user") || "";
+let user = localStorage.getItem('user') || '';
+if(user) document.getElementById('status').innerText = "Eingeloggt als: "+user;
 
 function login(){
-  let name = document.getElementById("username").value;
-  if(!name) return alert("Name eingeben!");
-  localStorage.setItem("user", name);
-  currentUser = name;
-  document.getElementById("userStatus").innerText = "Eingeloggt als: " + name;
-  renderEvents();
+ let n=document.getElementById('name').value;
+ if(!n)return alert('Name!');
+ user=n;
+ localStorage.setItem('user',n);
+ document.getElementById('status').innerText="Eingeloggt als: "+n;
 }
 
-if(currentUser){
-  document.getElementById("userStatus").innerText = "Eingeloggt als: " + currentUser;
-}
-
-// EVENTS
-let events = JSON.parse(localStorage.getItem("events")) || [
-  {name:"Gartic Phone", players:[]},
-  {name:"Codenames", players:[]},
-  {name:"Film Event", players:[]},
-  {name:"Valorant", players:[]},
-  {name:"Rainbow Six Siege", players:[]},
-  {name:"Fortnite", players:[]},
-  {name:"Minecraft", players:[]},
-  {name:"Among Us", players:[]}
+let events = JSON.parse(localStorage.getItem('events')) || [
+{name:'Fortnite',players:[]},
+{name:'Minecraft',players:[]},
+{name:'Valorant',players:[]}
 ];
 
-function save(){
-  localStorage.setItem("events", JSON.stringify(events));
-}
+function save(){localStorage.setItem('events',JSON.stringify(events));}
 
 function renderEvents(){
-  let el = document.getElementById('eventList');
-  el.innerHTML = '';
-  events.forEach((e,i)=>{
-    let div = document.createElement('div');
-    div.className = 'card';
-    div.innerHTML = `<h3>${e.name}</h3>
-    <p>Teilnehmer: ${e.players.join(', ') || 'Keine'}</p>
-    <button onclick="join(${i})">Anmelden</button>
-    <button onclick="leave(${i})">Abmelden</button>`;
-    el.appendChild(div);
-  });
+ let el=document.getElementById('eventList');
+ el.innerHTML='';
+ events.forEach((e,i)=>{
+ let d=document.createElement('div');
+ d.className='card';
+ d.innerHTML=`<b>${e.name}</b><br>Teilnehmer: ${e.players.join(', ')||'Keine'}<br>
+ <button onclick="join(${i})">Join</button>
+ <button onclick="leave(${i})">Leave</button>`;
+ el.appendChild(d);
+ });
 }
 
 function join(i){
-  if(!currentUser) return alert("Bitte einloggen!");
-  if(confirm("Teilnehmen?")){
-    if(!events[i].players.includes(currentUser)){
-      events[i].players.push(currentUser);
-      save();
-      renderEvents();
-    }
-  }
+ if(!user)return alert('Login nötig');
+ if(confirm('Wirklich teilnehmen?')){
+ if(!events[i].players.includes(user)){
+ events[i].players.push(user);
+ save();renderEvents();
+ }
+ }
 }
 
 function leave(i){
-  if(!currentUser) return alert("Bitte einloggen!");
-  let reason = prompt("Warum gehst du?");
-  events[i].players = events[i].players.filter(p=>p!==currentUser);
-  save();
-  alert("Abmeldung: " + reason);
-  renderEvents();
+ if(!user)return alert('Login nötig');
+ let reason=prompt('Grund?');
+ events[i].players=events[i].players.filter(p=>p!==user);
+ save();alert('Abmeldung: '+reason);renderEvents();
 }
 
 renderEvents();
 
-// VOTING SYSTEM
-let voteOptions = JSON.parse(localStorage.getItem("votes")) || [
-  {name:"Valorant", votes:0},
-  {name:"Among Us", votes:0},
-  {name:"Fortnite", votes:0},
-  {name:"Minecraft", votes:0}
+// VOTING
+let votes = JSON.parse(localStorage.getItem('votes')) || [
+{name:'Fortnite',v:0},
+{name:'Minecraft',v:0},
+{name:'Valorant',v:0}
 ];
 
-function saveVotes(){
-  localStorage.setItem("votes", JSON.stringify(voteOptions));
+function saveVotes(){localStorage.setItem('votes',JSON.stringify(votes));}
+
+function renderVotes(){
+ let el=document.getElementById('voteList');
+ el.innerHTML='';
+ votes.forEach((v,i)=>{
+ let d=document.createElement('div');
+ d.className='card';
+ d.innerHTML=`${v.name} (${v.v}) <button onclick="vote(${i})">Vote</button>`;
+ el.appendChild(d);
+ });
 }
 
-function render
+function vote(i){votes[i].v++;saveVotes();renderVotes();updateNext();}
+
+renderVotes();
+
+function updateNext(){
+ let top=votes.sort((a,b)=>b.v-a.v)[0];
+ document.getElementById('nextEvent').innerText="Nächstes Event: "+top.name;
+}
+updateNext();
+
+// ADMIN
+function addEvent(){
+ let name=document.getElementById('newEvent').value;
+ if(!name)return;
+ events.push({name:name,players:[]});
+ save();renderEvents();renderAdmin();
+}
+
+function renderAdmin(){
+ let el=document.getElementById('adminEvents');
+ el.innerHTML='';
+ events.forEach((e,i)=>{
+ let d=document.createElement('div');
+ d.className='card';
+ d.innerHTML=`${e.name} <button onclick="deleteEvent(${i})">Löschen</button>`;
+ el.appendChild(d);
+ });
+}
+
+function deleteEvent(i){
+ events.splice(i,1);
+ save();renderEvents();renderAdmin();
+}
+
+renderAdmin();
+
+// AUTO SYSTEME
+setInterval(()=>{console.log('Voting Update');},7200000);
+setInterval(()=>{
+ votes.forEach(v=>v.v=0);
+ saveVotes();
+ alert('Neue Voting Runde!');
+ renderVotes();
+},259200000);
+
+// DISCORD BOT PLACEHOLDER
+function sendDiscord(msg){
+ console.log('Discord Nachricht:',msg);
+}
+
+</script>
+</body>
+</html>
