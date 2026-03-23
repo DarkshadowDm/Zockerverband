@@ -5,245 +5,118 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Zockerverband</title>
 <style>
-body{
- margin:0;
- font-family:Arial;
- color:white;
- background:black;
- overflow:hidden;
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #1a1a1a, #0d0d0d);
+  color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
 }
 
-/* EPIC ANIMATED BACKGROUND */
-body::before{
- content:"";
- position:fixed;
- width:200%;
- height:200%;
- background:radial-gradient(circle,#ff00cc,#00ffff,#000);
- animation:move 10s linear infinite;
- z-index:-1;
- opacity:0.4;
+/* GOOGLE STYLE LOGIN */
+#loginContainer {
+  background: white;
+  padding: 60px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
 }
-
-@keyframes move{
- 0%{transform:translate(0,0)}
- 50%{transform:translate(-25%,-25%)}
- 100%{transform:translate(0,0)}
+#loginContainer h1 {
+  margin-bottom: 30px;
+  color: #202124;
 }
-
-nav{background:rgba(0,0,0,0.8);padding:15px;display:flex;gap:15px}
-nav a{cursor:pointer;font-weight:bold}
-section{display:none;padding:30px}
-section.active{display:block}
-.card{background:rgba(0,0,0,0.7);padding:15px;margin:10px 0;border-radius:12px}
-button{padding:8px;border:none;border-radius:6px;cursor:pointer}
-input{padding:6px;margin:5px;border-radius:6px;border:none}
+#loginContainer input {
+  width: 80%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 24px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+#loginContainer button {
+  width: 85%;
+  padding: 12px;
+  margin-top: 20px;
+  border-radius: 24px;
+  border: none;
+  background-color: #1a73e8;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+#loginContainer button:hover {
+  background-color: #155ab6;
+}
+#navBar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  padding: 15px;
+  background: rgba(255,255,255,0.9);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+#navBar a {
+  text-decoration: none;
+  color: #1a73e8;
+  font-weight: bold;
+  font-size: 16px;
+}
 </style>
 </head>
 <body>
 
-<nav>
-<a onclick="show('home')">Start</a>
-<a onclick="show('voting')">Voting</a>
-<a onclick="show('events')">Events</a>
-<a onclick="show('partner')">Partner</a>
-<a onclick="show('signup')">Anmelden</a>
-<a onclick="show('dashboard')">Team Dashboard</a>
-</nav>
+<div id="navBar">
+  <a onclick="show('home')">Start</a>
+  <a onclick="show('voting')">Voting</a>
+  <a onclick="show('events')">Events</a>
+  <a onclick="show('partner')">Partner Suche</a>
+  <a onclick="show('signup')">Anmelden</a>
+  <a onclick="show('dashboard')">Team Dashboard</a>
+</div>
 
 <section id="home" class="active">
-<h1>Zockerverband</h1>
-<p>Erstellt vom Team Zockerverband</p>
-<h2 id="nextEvent"></h2>
+  <h1>Zockerverband</h1>
+  <p>Erstellt vom Team Zockerverband</p>
+  <h2 id="nextEvent"></h2>
 </section>
 
 <section id="signup">
-<h2>Account (wie Google Login Style)</h2>
-<input id="name" placeholder="Name">
-<button onclick="login()">Einloggen</button>
-<p id="status"></p>
-<button onclick="connectDiscord()">Discord verbinden</button>
-<p id="discordStatus"></p>
+  <div id="loginContainer">
+    <h1>Willkommen</h1>
+    <input id="name" placeholder="Name">
+    <button onclick="login()">Einloggen</button>
+    <p id="status"></p>
+    <button onclick="connectDiscord()">Mit Discord verbinden</button>
+    <p id="discordStatus"></p>
+  </div>
 </section>
 
 <section id="voting">
-<h2>Voting</h2>
-<div id="votes"></div>
+  <h2>Voting</h2>
+  <div id="votes"></div>
 </section>
 
 <section id="events">
-<h2>Events (Anmeldung / Abmeldung)</h2>
-<div id="eventList"></div>
+  <h2>Events</h2>
+  <div id="eventList"></div>
 </section>
 
 <section id="partner">
-<h2>Partner Suche</h2>
-<input id="partnerInput">
-<button onclick="addPartner()">Post</button>
-<div id="partnerList"></div>
+  <h2>Partner Suche</h2>
+  <input id="partnerInput" placeholder="Suche Spieler">
+  <button onclick="addPartner()">Post</button>
+  <div id="partnerList"></div>
 </section>
 
 <section id="dashboard">
-<h2>🔒 Team Dashboard</h2>
-<div id="dashboardContent"></div>
-</section>
-
-<script>
-function show(id){
- document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
- document.getElementById(id).classList.add('active');
-}
-
-// LOGIN
-let user=localStorage.getItem('user')||'';
-if(user)document.getElementById('status').innerText='Eingeloggt als '+user;
-
-function login(){
- let n=document.getElementById('name').value;
- if(!n)return alert('Name!');
- user=n;
- localStorage.setItem('user',n);
- document.getElementById('status').innerText='Eingeloggt als '+n;
-}
-
-// DISCORD WEBHOOK
-const webhookURL="HIER_DEIN_DISCORD_WEBHOOK";
-
-function sendDiscord(msg){
- fetch(webhookURL,{
- method:"POST",
- headers:{"Content-Type":"application/json"},
- body:JSON.stringify({content:msg})
- });
-}
-
-// DISCORD CONNECT (SIM)
-let isTeam=false;
-function connectDiscord(){
- let code=prompt('Team Code (1234)');
- if(code==='1234'){
- isTeam=true;
- document.getElementById('discordStatus').innerText='Verbunden (Team)';
- loadDashboard();
- }
-}
-
-// EVENTS
-let events=JSON.parse(localStorage.getItem('events'))||[
-{name:'Fortnite',players:[]},
-{name:'Minecraft',players:[]},
-{name:'Valorant',players:[]}
-];
-
-function save(){localStorage.setItem('events',JSON.stringify(events));}
-
-function renderEvents(){
- let el=document.getElementById('eventList');
- el.innerHTML='';
- events.forEach((e,i)=>{
- let d=document.createElement('div');
- d.className='card';
- d.innerHTML=`${e.name}<br>${e.players.join(', ')||'Keine'}<br>
- <button onclick="join(${i})">Anmelden</button>
- <button onclick="leave(${i})">Abmelden</button>`;
- el.appendChild(d);
- });
-}
-
-function join(i){
- if(!user)return alert('Login nötig');
- if(confirm('Wirklich teilnehmen?')){
- events[i].players.push(user);
- save();renderEvents();
- sendDiscord(user+' hat sich angemeldet für '+events[i].name);
- }
-}
-
-function leave(i){
- if(!user)return alert('Login nötig');
- if(confirm('Wirklich abmelden?')){
- let reason=prompt('Grund?');
- events[i].players=events[i].players.filter(p=>p!==user);
- save();renderEvents();
- sendDiscord(user+' hat sich abgemeldet: '+reason);
- }
-}
-
-renderEvents();
-
-// VOTING
-let votes=JSON.parse(localStorage.getItem('votes'))||[
-{name:'Fortnite',v:0},
-{name:'Minecraft',v:0},
-{name:'Valorant',v:0}
-];
-
-function saveVotes(){localStorage.setItem('votes',JSON.stringify(votes));}
-
-function renderVotes(){
- let el=document.getElementById('votes');
- el.innerHTML='';
- votes.forEach((v,i)=>{
- let d=document.createElement('div');
- d.className='card';
- d.innerHTML=`${v.name} (${v.v}) <button onclick="vote(${i})">Vote</button>`;
- el.appendChild(d);
- });
-}
-
-function vote(i){
- votes[i].v++;
- saveVotes();
- renderVotes();
- updateWinner();
-}
-
-function updateWinner(){
- let win=votes.sort((a,b)=>b.v-a.v)[0];
- document.getElementById('nextEvent').innerText='Nächstes Event: '+win.name;
- sendDiscord('Nächstes Event ist '+win.name);
-}
-
-renderVotes();updateWinner();
-
-// AUTO SYSTEM
-setInterval(()=>{console.log('Voting Update');},7200000);
-setInterval(()=>{
- votes.forEach(v=>v.v=0);
- saveVotes();
- alert('Neue Voting Runde!');
- renderVotes();
-},259200000);
-
-// DASHBOARD
-function loadDashboard(){
- let el=document.getElementById('dashboardContent');
- if(!isTeam){el.innerHTML='Kein Zugriff';return;}
- el.innerHTML=`
- <div class='card'>
- <button onclick="addEvent()">Event hinzufügen</button>
- </div>`;
-}
-
-function addEvent(){
- let name=prompt('Event Name');
- if(!name)return;
- events.push({name:name,players:[]});
- save();renderEvents();
- sendDiscord('Neues Event erstellt: '+name);
-}
-
-// PARTNER
-function addPartner(){
- let t=document.getElementById('partnerInput').value;
- let d=document.createElement('div');
- d.className='card';
- d.innerText=t;
- document.getElementById('partnerList').appendChild(d);
- sendDiscord('Partner gesucht: '+t);
-}
-
-</script>
-
-</body>
-</html>
+  <h2>Team Dashboard</h2>
+  <div id="
