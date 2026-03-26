@@ -2,154 +2,103 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>ZKV Gaming Verband</title>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zockerverband</title>
   <style>
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #0a0a0a, #1a0033, #000033);
+      background: #0f172a;
       color: white;
     }
-
     header {
+      background: #020617;
+      padding: 20px;
       text-align: center;
-      padding: 40px;
+      font-size: 24px;
+      font-weight: bold;
     }
-
-    header h1 {
-      font-size: 50px;
-      color: #a855f7;
-    }
-
-    header p {
-      color: #aaa;
-    }
-
     nav {
       display: flex;
       justify-content: center;
-      gap: 30px;
-      background: #111;
-      padding: 15px;
+      background: #1e293b;
     }
-
     nav a {
+      padding: 15px 20px;
       color: white;
       text-decoration: none;
-      transition: 0.3s;
     }
-
     nav a:hover {
-      color: #a855f7;
+      background: #334155;
     }
-
     section {
       padding: 40px;
-      max-width: 1000px;
-      margin: auto;
     }
-
+    .hero {
+      text-align: center;
+      background: linear-gradient(to right, #1e3a8a, #9333ea);
+      padding: 60px 20px;
+    }
     .card {
-      background: rgba(20,20,20,0.9);
+      background: #1e293b;
       padding: 20px;
-      margin-bottom: 20px;
       border-radius: 10px;
-      border: 1px solid #333;
+      margin: 10px 0;
     }
-
-    .button {
-      display: inline-block;
-      margin-top: 15px;
-      padding: 10px 20px;
-      background: #7c3aed;
-      color: white;
-      border-radius: 5px;
-      text-decoration: none;
-    }
-
-    .button:hover {
+    button {
       background: #9333ea;
+      border: none;
+      padding: 10px 15px;
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
     }
-
+    button:hover {
+      background: #7e22ce;
+    }
     footer {
       text-align: center;
       padding: 20px;
-      color: #666;
+      background: #020617;
     }
   </style>
 </head>
-
 <body>
 
-<header>
-  <h1>ZKV Gaming Verband</h1>
-  <p>Turniere • Streams • Community</p>
-  <a class="button" href="#">Jetzt teilnehmen</a>
-</header>
+<header>Zockerverband 🎮</header>
 
 <nav>
-  <a href="#">Home</a>
-  <a href="#">Turniere</a>
-  <a href="#">Live</a>
-  <a href="#">Team</a>
+  <a href="#home">Home</a>
+  <a href="#team">Team</a>
+  <a href="#events">Events</a>
+  <a href="#voting">Voting</a>
 </nav>
 
-<section>
-
-  <div class="card">
-    <h2>Über ZKV</h2>
-    <p>
-      Website in Arbeit Es geht noch nicht alles ich bitte um verstandnis 
-    </p>
-  </div>
-
-  <div class="card">
-    <h2>Turniere</h2>
-    <ul>
-      <li>Valorant OG Cup (Premier Style)</li>
-      <li>Rocket League Turnier</li>
-      <li>Minecraft Turnier</li>
-      <li>Roblox Turnier</li>
-      <li>Allgemeine Shooter Turniere</li>
-    </ul>
-  </div>
-
-  <div class="card">
-    <h2>Live Streams</h2>
-    <p>Multistream & Crossstream Events mit mehreren Streamern.</p>
-
-    <iframe 
-      src="https://player.twitch.tv/?channel=riotgames&parent=localhost"
-      height="300"
-      width="100%">
-    </iframe>
-  </div>
-
-  <div class="card">
-    <h2>Voting</h2>
-    <p>Die Community entscheidet, welches Spiel als nächstes Turnier gespielt wird.</p>
-    <button class="button">Abstimmen</button>
-  </div>
-
-  <div class="card">
-    <h2>Turnier Anmeldung</h2>
-    <input placeholder="Team Name" style="padding:10px;width:100%;margin-bottom:10px;">
-    <button class="button">Anmelden</button>
-  </div>
-
-  <div class="card">
-    <h2>Team Struktur</h2>
-    <p><b>DarkShadow & Tony:</b> Bot, Website, Turniere, Support</p>
-    <p><b>Void & Bryan:</b> Server Überwachung</p>
-    <p><b>Foxel & Firani:</b> Streams & Overlays</p>
-  </div>
-
+<section id="home" class="hero">
+  <h1>Willkommen im Zockerverband 🚀</h1>
+  <p>Du liebst Gaming und suchst eine coole Truppe? Dann bist du im Zockerverband genau richtig! Tausche dich aus, finde Mitspieler für deine Lieblingsgames und erlebe gemeinsam epische Momente. Werde jetzt Teil des Verbandes! 🚀🎮</p>
 </section>
 
-<footer>
-  © 2026 ZKV Gaming Verband
-</footer>
+<section id="team">
+  <h2>👥 Team</h2>
+  <div class="card">Admin - DarkShadow</div>
+  <div class="card">Moderator - Offen</div>
+</section>
 
-</body>
-</html>
+<section id="events">
+  <h2>📅 Events Übersicht</h2>
+  <div class="card">
+    <h3>Minecraft Event</h3>
+    <p>Datum: 01.04.2026</p>
+    <button onclick="alert('Du hast dich angemeldet!')">Anmelden</button>
+    <button onclick="alert('Du hast dich abgemeldet!')">Abmelden</button>
+  </div>
+</section>
+
+<section id="voting">
+  <h2>🗳️ Event Voting</h2>
+  <p>Wähle das nächste Spiel!</p>
+  <button onclick="vote('Minecraft')">Minecraft</button>
+  <button onclick="vote('Fortnite')">Fortnite</button>
+  <button onclick="vote('Valorant')">Valorant</button>
+  <p id
