@@ -1,104 +1,155 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zockerverband</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: white;
-    }
-    header {
-      background: #020617;
-      padding: 20px;
-      text-align: center;
-      font-size: 24px;
-      font-weight: bold;
-    }
-    nav {
-      display: flex;
-      justify-content: center;
-      background: #1e293b;
-    }
-    nav a {
-      padding: 15px 20px;
-      color: white;
-      text-decoration: none;
-    }
-    nav a:hover {
-      background: #334155;
-    }
-    section {
-      padding: 40px;
-    }
-    .hero {
-      text-align: center;
-      background: linear-gradient(to right, #1e3a8a, #9333ea);
-      padding: 60px 20px;
-    }
-    .card {
-      background: #1e293b;
-      padding: 20px;
-      border-radius: 10px;
-      margin: 10px 0;
-    }
-    button {
-      background: #9333ea;
-      border: none;
-      padding: 10px 15px;
-      color: white;
-      cursor: pointer;
-      border-radius: 5px;
-    }
-    button:hover {
-      background: #7e22ce;
-    }
-    footer {
-      text-align: center;
-      padding: 20px;
-      background: #020617;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Zockerverband - Home</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-
 <header>Zockerverband 🎮</header>
-
 <nav>
-  <a href="#home">Home</a>
-  <a href="#team">Team</a>
-  <a href="#events">Events</a>
-  <a href="#voting">Voting</a>
+<a href="index.html">Home</a>
+<a href="team.html">Team</a>
+<a href="events.html">Events</a>
+<a href="voting.html">Voting</a>
 </nav>
-
-<section id="home" class="hero">
-  <h1>Willkommen im Zockerverband 🚀</h1>
-  <p>Du liebst Gaming und suchst eine coole Truppe? Dann bist du im Zockerverband genau richtig! Tausche dich aus, finde Mitspieler für deine Lieblingsgames und erlebe gemeinsam epische Momente. Werde jetzt Teil des Verbandes! 🚀🎮</p>
+<section class="hero">
+<h1>Willkommen im Zockerverband 🚀</h1>
+<p>Du liebst Gaming und suchst eine coole Truppe? Dann bist du im Zockerverband genau richtig! Tausche dich aus, finde Mitspieler für deine Lieblingsgames und erlebe gemeinsam epische Momente. Werde jetzt Teil des Verbandes! 🚀🎮</p>
 </section>
+</body>
+</html>
 
-<section id="team">
-  <h2>👥 Team</h2>
-  <div class="card">Admin - DarkShadow</div>
-  <div class="card">Moderator - Offen</div>
+<!-- team.html -->
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Team</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>Zockerverband 🎮</header>
+<nav>
+<a href="index.html">Home</a>
+<a href="team.html">Team</a>
+<a href="events.html">Events</a>
+<a href="voting.html">Voting</a>
+</nav>
+<section>
+<h2>👥 Team</h2>
+<div class="card">Admin - DarkShadow</div>
+<div class="card">Moderator - Offen</div>
 </section>
+</body>
+</html>
 
-<section id="events">
-  <h2>📅 Events Übersicht</h2>
-  <div class="card">
-    <h3>Minecraft Event</h3>
-    <p>Datum: 01.04.2026</p>
-    <button onclick="alert('Du hast dich angemeldet!')">Anmelden</button>
-    <button onclick="alert('Du hast dich abgemeldet!')">Abmelden</button>
-  </div>
+<!-- events.html -->
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Events</title>
+<link rel="stylesheet" href="style.css">
+<script src="script.js"></script>
+</head>
+<body>
+<header>Zockerverband 🎮</header>
+<nav>
+<a href="index.html">Home</a>
+<a href="team.html">Team</a>
+<a href="events.html">Events</a>
+<a href="voting.html">Voting</a>
+</nav>
+<section>
+<h2>📅 Events</h2>
+<div class="card">
+<h3>Minecraft Event</h3>
+<p>Datum: 01.04.2026</p>
+<button onclick="anmelden()">Anmelden</button>
+<button onclick="abmelden()">Abmelden</button>
+</div>
 </section>
+</body>
+</html>
 
-<section id="voting">
-  <h2>🗳️ Event Voting</h2>
-  <p>Wähle das nächste Spiel!</p>
-  <button onclick="vote('Minecraft')">Minecraft</button>
-  <button onclick="vote('Fortnite')">Fortnite</button>
-  <button onclick="vote('Valorant')">Valorant</button>
-  <p id
+<!-- voting.html -->
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Voting</title>
+<link rel="stylesheet" href="style.css">
+<script src="script.js"></script>
+</head>
+<body>
+<header>Zockerverband 🎮</header>
+<nav>
+<a href="index.html">Home</a>
+<a href="team.html">Team</a>
+<a href="events.html">Events</a>
+<a href="voting.html">Voting</a>
+</nav>
+<section>
+<h2>🗳️ Voting</h2>
+<button onclick="vote('Minecraft')">Minecraft</button>
+<button onclick="vote('Fortnite')">Fortnite</button>
+<button onclick="vote('Valorant')">Valorant</button>
+<p id="result"></p>
+</section>
+</body>
+</html>
+
+<!-- style.css -->
+body {
+margin: 0;
+font-family: Arial;
+background: #0f172a;
+color: white;
+}
+header {
+background: #020617;
+padding: 20px;
+text-align: center;
+}
+nav {
+display: flex;
+justify-content: center;
+background: #1e293b;
+}
+nav a {
+padding: 15px;
+color: white;
+text-decoration: none;
+}
+.card {
+background: #1e293b;
+padding: 20px;
+margin: 10px;
+border-radius: 10px;
+}
+button {
+background: purple;
+color: white;
+border: none;
+padding: 10px;
+margin: 5px;
+cursor: pointer;
+}
+
+<!-- script.js -->
+let votes = {Minecraft:0, Fortnite:0, Valorant:0};
+
+function vote(game){
+votes[game]++;
+document.getElementById('result').innerText = JSON.stringify(votes);
+}
+
+function anmelden(){
+alert('Angemeldet!');
+}
+
+function abmelden(){
+alert('Abgemeldet!');
+}
